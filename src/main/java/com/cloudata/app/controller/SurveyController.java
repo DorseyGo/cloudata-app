@@ -46,4 +46,18 @@ public class SurveyController {
 
         return new ModelAndView("/survey/questions/questions", "survey", view);
     }
+
+@RequestMapping("/createNewSurvey")
+public ModelAndView createNewSurvey(final HttpServletRequest request) throws ServletException {
+    String surveyName = ServletUtils.getParam(request, SurveyConstants.REQ_SURVEY_NAME, "");
+    if (surveyName.isEmpty()) {
+        throw new ServletException(SurveyConstants.REQ_SURVEY_NAME + " with no value");
+    }
+
+    SurveyView view = new SurveyView();
+    view.setSurveyTitle(surveyName);
+    view.setSurveyId(1);
+    return new ModelAndView("/survey/questions/question-new", "survey", view);
+}
+
 }
