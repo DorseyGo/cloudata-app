@@ -46,4 +46,15 @@ public interface ConConstants extends Serializable {
     String CMD_SET_SURVEY_PROPERTIES = "set_survey_properties";
     String SERIALIZED_SURVEY_DATA = "aSurveyData";
     String CMD_ACTIVATE_SURVEY = "activate_survey";
+    String CMD_GET_SURVEY_PROPERTIES = "get_survey_properties";
+    String SERIALIZED_SURVEY_SETTINGS = "aSurveySettings";
+    String CMD_ADD_GROUP = "add_group";
+    String SERIALIZED_GROUP_TITLE = "sGroupTitle";
+    String SERIALIZED_GROUP_DESCRIPTION = "sGroupDescription";
+    String CMD_DELETE_GROUP = "delete_group";
+    String SERIALIZED_IGROUP_ID = "iGroupID";
+    String CMD_GET_GROUP_PROPERTIES = "get_group_properties";
+    String SERIALIZED_GROUP_SETTINGS = "aGroupSettings";
+    String CMD_SET_GROUP_PROPERTIES = "set_group_properties";
+    String SERIALIZED_GROUP_DATA = "aGroupData";
 }

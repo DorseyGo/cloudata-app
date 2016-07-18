@@ -56,6 +56,11 @@ public class ConnectManagerImpl implements ConnectManager {
     }
 
     @Override
+    public GetOrSetPropertiesResponse getSurveyProperties(GetSurveyPropertiesReqParams reqParams) throws CommandExecutionException {
+        return connector.connect(reqParams, new DefaultResultCallback<>(GetOrSetPropertiesResponse.class), new DefaultResultFilter());
+    }
+
+    @Override
     public boolean setSurveyProperties(final SetSurveyPropertiesReqParams reqParams) throws CommandExecutionException {
         BooleanStatusResponse response = connector.connect(reqParams, new ResultValueCheckingCallback(reqParams.getProperties().keySet()), new DefaultResultFilter());
 
@@ -67,6 +72,28 @@ public class ConnectManagerImpl implements ConnectManager {
         BooleanStatusResponse response = connector.connect(reqParams, new ResultStrippedCallback<>(BooleanStatusResponse.class), new DefaultResultFilter());
 
         return ConConstants.OK_RESPONSE.equalsIgnoreCase(response.getStatus());
+    }
+
+    @Override
+    public AddGroupResponse addGroup(AddGroupReqParams reqParams) throws CommandExecutionException {
+        return connector.connect(reqParams, new DefaultResultCallback<>(AddGroupResponse.class), new DefaultResultFilter());
+    }
+
+    @Override
+    public boolean deleteGroup(DeleteGroupReqParams reqParams) throws CommandExecutionException {
+        DeleteGroupResponse response = connector.connect(reqParams, new DefaultResultCallback<>(DeleteGroupResponse.class), new DefaultResultFilter());
+
+        return (reqParams.getGroupId() == response.getGroupIdRemoved());
+    }
+
+    @Override
+    public GetOrSetPropertiesResponse getGroupProperties(GetGroupPropertiesReqParams reqParams) throws CommandExecutionException {
+        return connector.connect(reqParams, new DefaultResultCallback<>(GetOrSetPropertiesResponse.class), new DefaultResultFilter());
+    }
+
+    @Override
+    public GetOrSetPropertiesResponse setGroupProperties(SetGroupPropertiesReqParams reqParams) throws CommandExecutionException {
+        return connector.connect(reqParams, new DefaultResultCallback<>(GetOrSetPropertiesResponse.class), new DefaultResultFilter());
     }
 
     public void setConnector(final ReqConnector connector) {
