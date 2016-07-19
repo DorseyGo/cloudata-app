@@ -57,4 +57,10 @@ public interface ConConstants extends Serializable {
     String SERIALIZED_GROUP_SETTINGS = "aGroupSettings";
     String CMD_SET_GROUP_PROPERTIES = "set_group_properties";
     String SERIALIZED_GROUP_DATA = "aGroupData";
+
+    String CMD_DELETE_QUESTION = "delete_question";
+    String SERIALIZED_IQUESTION_ID = "iQuestionID";
+    String CMD_IMPORT_QUESTION = "import_question";
+    String SERIALIZED_IMPORT_DATA = "sImportData";
+    String SERIALIZED_IMPORT_DATA_TYPE = "sImportDataType";
 }

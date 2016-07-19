@@ -96,6 +96,18 @@ public class ConnectManagerImpl implements ConnectManager {
         return connector.connect(reqParams, new DefaultResultCallback<>(GetOrSetPropertiesResponse.class), new DefaultResultFilter());
     }
 
+    @Override
+    public boolean deleteQuestion(DeleteQuestionReqParams reqParams) throws CommandExecutionException {
+        DeleteQuestionResponse response = connector.connect(reqParams, new DefaultResultCallback<>(DeleteQuestionResponse.class), new DefaultResultFilter());
+
+        return (reqParams.getQuestionId() == response.getQuestionId());
+    }
+
+    @Override
+    public ImportQuestionResponse importQuestion(ImportQuestionReqParams reqParams) throws CommandExecutionException {
+        return connector.connect(reqParams, new DefaultResultCallback<>(ImportQuestionResponse.class), new DefaultResultFilter());
+    }
+
     public void setConnector(final ReqConnector connector) {
         this.connector = connector;
     }

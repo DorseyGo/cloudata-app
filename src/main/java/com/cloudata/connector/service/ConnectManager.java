@@ -11,10 +11,7 @@ package com.cloudata.connector.service;
 
 import com.cloudata.connector.exception.CommandExecutionException;
 import com.cloudata.connector.request.*;
-import com.cloudata.connector.response.AddGroupResponse;
-import com.cloudata.connector.response.AddSurveyResponse;
-import com.cloudata.connector.response.GetOrSetPropertiesResponse;
-import com.cloudata.connector.response.GetSessionKeyResponse;
+import com.cloudata.connector.response.*;
 
 /**
  * A service interface, which defines lots of manipulations on specific server.
@@ -138,4 +135,25 @@ public interface ConnectManager {
      * @throws CommandExecutionException if errors detected during the procedure.
      */
     GetOrSetPropertiesResponse setGroupProperties(final SetGroupPropertiesReqParams reqParams) throws CommandExecutionException;
+
+    /**
+     * To invoke <tt>{@link com.cloudata.connector.ConConstants#CMD_DELETE_QUESTION}</tt> on server side, and returns true
+     * if the command executed successfully. It throws command execution exception if errors detected during procedure.
+     *
+     * @param reqParams the required request parameters to call the specific APIs.
+     * @return true if and only if the question is removed successfully.
+     * @throws CommandExecutionException if errors detected during the procedure.
+     */
+    boolean deleteQuestion(final DeleteQuestionReqParams reqParams) throws CommandExecutionException;
+
+    /**
+     * To invoke <tt>{@link com.cloudata.connector.ConConstants#CMD_IMPORT_QUESTION}</tt> on server side, and
+     * returns the response if the command executed successfully. It throws command execution exception if errors
+     * detected during procedure.
+     *
+     * @param reqParams the required request parameters to call the specific APIs.
+     * @return the response generated.
+     * @throws CommandExecutionException if errors detected during the procedure.
+     */
+    ImportQuestionResponse importQuestion(final ImportQuestionReqParams reqParams) throws CommandExecutionException;
 }
