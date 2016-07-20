@@ -13,6 +13,8 @@ import com.cloudata.connector.exception.CommandExecutionException;
 import com.cloudata.connector.request.*;
 import com.cloudata.connector.response.*;
 
+import java.util.List;
+
 /**
  * A service interface, which defines lots of manipulations on specific server.
  * <p>
@@ -156,4 +158,15 @@ public interface ConnectManager {
      * @throws CommandExecutionException if errors detected during the procedure.
      */
     ImportQuestionResponse importQuestion(final ImportQuestionReqParams reqParams) throws CommandExecutionException;
+
+    /**
+     * To invoke <tt>{@link com.cloudata.connector.ConConstants#CMD_LIST_SURVEYS}</tt> on server side, and
+     * returns the response if the command executed successfully. It throws command execution exception if errors
+     * detected during procedure.
+     *
+     * @param reqParams the required request parameters to call the specific APIs.
+     * @return the response generated.
+     * @throws CommandExecutionException if errors detected during the procedure.
+     */
+    List<ListSurveysResponse> listSurveys(final ListSurveysReqParams reqParams) throws CommandExecutionException;
 }

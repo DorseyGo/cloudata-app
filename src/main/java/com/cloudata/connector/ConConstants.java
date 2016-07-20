@@ -63,4 +63,12 @@ public interface ConConstants extends Serializable {
     String CMD_IMPORT_QUESTION = "import_question";
     String SERIALIZED_IMPORT_DATA = "sImportData";
     String SERIALIZED_IMPORT_DATA_TYPE = "sImportDataType";
+
+    String CMD_LIST_SURVEYS = "list_surveys";
+    String SERIALIZED_SUSERNAME = "sUsername";
+    String SERIALIZED_SURVEY_ID = "sid";
+    String SERIALIZED_SURVEY_LIST_TITLE = "surveyls_title";
+    String SERIALIZED_START_DATE = "startDate";
+    String SERIALIZED_EXPIRES = "expires";
+    String SERIALIZED_ACTIVE = "active";
 }

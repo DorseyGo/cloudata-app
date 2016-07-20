@@ -13,11 +13,12 @@ import com.cloudata.connector.ConConstants;
 import com.cloudata.connector.ReqConnector;
 import com.cloudata.connector.callback.impl.DefaultResultCallback;
 import com.cloudata.connector.callback.impl.ResultStrippedCallback;
-import com.cloudata.connector.callback.impl.ResultValueCheckingCallback;
 import com.cloudata.connector.exception.CommandExecutionException;
 import com.cloudata.connector.filter.impl.DefaultResultFilter;
 import com.cloudata.connector.request.*;
 import com.cloudata.connector.response.*;
+
+import java.util.*;
 
 /**
  * An implementation of {@link ConnectManager}.
@@ -62,9 +63,19 @@ public class ConnectManagerImpl implements ConnectManager {
 
     @Override
     public boolean setSurveyProperties(final SetSurveyPropertiesReqParams reqParams) throws CommandExecutionException {
-        BooleanStatusResponse response = connector.connect(reqParams, new ResultValueCheckingCallback(reqParams.getProperties().keySet()), new DefaultResultFilter());
+        GetOrSetPropertiesResponse response = connector.connect(reqParams, new DefaultResultCallback<>(GetOrSetPropertiesResponse.class), new DefaultResultFilter());
+        Map<String, Object> props = response.getProps();
+        boolean succeed = true;
+        Iterator<Object> vals = props.values().iterator();
+        while (vals.hasNext()) {
+            Boolean val = (Boolean) vals.next();
+            succeed = succeed && val.booleanValue();
+            if (!succeed)
+                break;
+        }
 
-        return ConConstants.OK_RESPONSE.equalsIgnoreCase(response.getStatus());
+
+        return succeed;
     }
 
     @Override
@@ -106,6 +117,11 @@ public class ConnectManagerImpl implements ConnectManager {
     @Override
     public ImportQuestionResponse importQuestion(ImportQuestionReqParams reqParams) throws CommandExecutionException {
         return connector.connect(reqParams, new DefaultResultCallback<>(ImportQuestionResponse.class), new DefaultResultFilter());
+    }
+
+    @Override
+    public List<ListSurveysResponse> listSurveys(ListSurveysReqParams reqParams) throws CommandExecutionException {
+        return null;
     }
 
     public void setConnector(final ReqConnector connector) {
