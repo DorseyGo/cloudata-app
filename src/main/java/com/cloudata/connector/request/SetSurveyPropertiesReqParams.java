@@ -58,6 +58,9 @@ public class SetSurveyPropertiesReqParams extends AbstractReqParams {
      */
     public SetSurveyPropertiesReqParams(final String sessionKey, final int surveyId, final Map<String, Object> properties) {
         super(ConConstants.CMD_SET_SURVEY_PROPERTIES);
+        setSessionKey(sessionKey);
+        setSurveyId(surveyId);
+        setProperties(properties);
     }
 
     public String getSessionKey() {

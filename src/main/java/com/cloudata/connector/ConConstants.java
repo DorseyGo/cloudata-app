@@ -71,4 +71,12 @@ public interface ConConstants extends Serializable {
     String SERIALIZED_START_DATE = "startDate";
     String SERIALIZED_EXPIRES = "expires";
     String SERIALIZED_ACTIVE = "active";
+
+    String CMD_LIST_GROUPS = "list_groups";
+    String SERIALIZED_GROUP_ID = "gid";
+    String SERIALIZED_GROUP_NAME = "group_name";
+    String SERIALIZED_GROUP_ORDER = "group_order";
+    String SERIALIZED_DESCRIPTION = "description";
+    String SERIALIZED_LANGUAGE = "language";
+    String SERIALIZED_GROUP_RELEVANCE = "grelevance";
 }

@@ -11,6 +11,7 @@ package com.cloudata.connector.service;
 
 import com.cloudata.connector.ConConstants;
 import com.cloudata.connector.ReqConnector;
+import com.cloudata.connector.callback.impl.CollectionResultCallback;
 import com.cloudata.connector.callback.impl.DefaultResultCallback;
 import com.cloudata.connector.callback.impl.ResultStrippedCallback;
 import com.cloudata.connector.exception.CommandExecutionException;
@@ -51,7 +52,7 @@ public class ConnectManagerImpl implements ConnectManager {
 
     @Override
     public boolean deleteSurvey(final DeleteSurveyReqParams reqParams) throws CommandExecutionException {
-        BooleanStatusResponse response = connector.connect(reqParams, new ResultStrippedCallback<>(BooleanStatusResponse.class), new DefaultResultFilter());
+        BooleanStatusResponse response = connector.connect(reqParams, new ResultStrippedCallback<>(new DefaultResultCallback<>(BooleanStatusResponse.class)), new DefaultResultFilter());
 
         return ConConstants.OK_RESPONSE.equalsIgnoreCase(response.getStatus());
     }
@@ -80,7 +81,7 @@ public class ConnectManagerImpl implements ConnectManager {
 
     @Override
     public boolean activateSurvey(final ActivateSurveyReqParams reqParams) throws CommandExecutionException {
-        BooleanStatusResponse response = connector.connect(reqParams, new ResultStrippedCallback<>(BooleanStatusResponse.class), new DefaultResultFilter());
+        BooleanStatusResponse response = connector.connect(reqParams, new ResultStrippedCallback<>(new DefaultResultCallback<>(BooleanStatusResponse.class)), new DefaultResultFilter());
 
         return ConConstants.OK_RESPONSE.equalsIgnoreCase(response.getStatus());
     }
@@ -121,7 +122,16 @@ public class ConnectManagerImpl implements ConnectManager {
 
     @Override
     public List<ListSurveysResponse> listSurveys(ListSurveysReqParams reqParams) throws CommandExecutionException {
-        return null;
+       ResponseDecorator<ListSurveysResponse> decorator = connector.connect(reqParams, new CollectionResultCallback<>(ListSurveysResponse.class), new DefaultResultFilter());
+
+        return decorator.getRetResponse();
+    }
+
+    @Override
+    public List<ListGroupsResponse> listGroups(ListGroupsReqParams reqParams) throws CommandExecutionException {
+        ResponseDecorator<ListGroupsResponse> decorator = connector.connect(reqParams, new CollectionResultCallback<>(ListGroupsResponse.class), new DefaultResultFilter());
+
+        return decorator.getRetResponse();
     }
 
     public void setConnector(final ReqConnector connector) {

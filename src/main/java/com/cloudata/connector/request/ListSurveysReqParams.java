@@ -14,10 +14,11 @@ import com.cloudata.connector.annotations.NotNull;
 import com.cloudata.connector.annotations.Optional;
 import com.cloudata.connector.annotations.Orderized;
 import com.cloudata.connector.annotations.Serialize;
+import com.cloudata.connector.response.ListSurveysResponse;
 
 /**
  * The request parameters should be sent when command {@link ConConstants#CMD_LIST_SURVEYS} is executed on server side.
- *
+ * <p>
  * Author: DORSEy
  */
 @Orderized(order = {ConConstants.SERIALIZED_SESSION_KEY, ConConstants.SERIALIZED_SUSERNAME})
@@ -41,7 +42,16 @@ public class ListSurveysReqParams extends AbstractReqParams {
      * Empty constructor of {@link ListSurveysReqParams}.
      */
     public ListSurveysReqParams() {
-        this(null, null);
+        this(null);
+    }
+
+    /**
+     * Constructor of {@link ListSurveysReqParams}, with session key specified.
+     *
+     * @param sessionKey the session key.
+     */
+    public ListSurveysReqParams(final String sessionKey) {
+        this(sessionKey, null);
     }
 
     /**

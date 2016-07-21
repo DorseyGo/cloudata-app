@@ -21,19 +21,15 @@ import com.google.gson.JsonParser;
 /**
  * Author: DORSEy
  */
-public class ResultStrippedCallback<T extends Resp> implements ResultCallback<T> {
-    /**
-     * The type of bean to be serialized.
-     */
-    private Class<T> typeOfBean;
+public class ResultStrippedCallback<T extends Resp> extends ResultCallbackWrapper<T> {
 
     /**
      * Constructor of {@link ResultStrippedCallback}, with type of bean specified.
      *
-     * @param typeOfBean the type of bean.
+     * @param wrapped the wrapped callback handler.
      */
-    public ResultStrippedCallback(final Class<T> typeOfBean) {
-        this.typeOfBean = typeOfBean;
+    public ResultStrippedCallback(final ResultCallback<T> wrapped) {
+        super(wrapped);
     }
 
     @Override
@@ -42,8 +38,7 @@ public class ResultStrippedCallback<T extends Resp> implements ResultCallback<T>
         JsonObject rootJsonObj = jsonElement.getAsJsonObject();
         jsonElement = rootJsonObj.get(ConConstants.SERIALIZED_RESULT);
 
-        Gson gson = new Gson();
-        T bean = gson.fromJson(jsonElement, typeOfBean);
+        T bean = super.wrappedCallback.doWith(jsonElement.toString());
 
         return bean;
     }

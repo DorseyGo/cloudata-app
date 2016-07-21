@@ -169,4 +169,6 @@ public interface ConnectManager {
      * @throws CommandExecutionException if errors detected during the procedure.
      */
     List<ListSurveysResponse> listSurveys(final ListSurveysReqParams reqParams) throws CommandExecutionException;
+
+    List<ListGroupsResponse> listGroups(final ListGroupsReqParams reqParams) throws CommandExecutionException;
 }
