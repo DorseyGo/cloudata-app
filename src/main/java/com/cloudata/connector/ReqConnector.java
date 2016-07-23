@@ -12,6 +12,8 @@ package com.cloudata.connector;
 import com.cloudata.connector.callback.ResultCallback;
 import com.cloudata.connector.creator.HttpClientCreator;
 import com.cloudata.connector.creator.HttpMethodCreator;
+import com.cloudata.connector.creator.impl.SimpleHttpClientCreator;
+import com.cloudata.connector.creator.impl.SimpleHttpMethodCreator;
 import com.cloudata.connector.exception.CommandExecutionException;
 import com.cloudata.connector.exception.InsufficientReqParamException;
 import com.cloudata.connector.filter.ResultFilter;
@@ -50,7 +52,7 @@ public class ReqConnector {
      * Default constructor of {@link ReqConnector}.
      */
     public ReqConnector() {
-        this(null, null);
+        this(new SimpleHttpClientCreator(), SimpleHttpMethodCreator.create(""));
     }
 
     /**
