@@ -13,6 +13,7 @@ import com.cloudata.connector.callback.ResultCallback;
 import com.cloudata.connector.creator.HttpClientCreator;
 import com.cloudata.connector.creator.HttpMethodCreator;
 import com.cloudata.connector.exception.CommandExecutionException;
+import com.cloudata.connector.exception.InsufficientReqParamException;
 import com.cloudata.connector.filter.ResultFilter;
 import com.cloudata.connector.request.ReqParams;
 import com.cloudata.connector.response.Resp;
@@ -103,7 +104,7 @@ public class ReqConnector {
             // an exception is thrown to indicate it failed
             throw new CommandExecutionException("Connect to server specified failed, the status code is: \'" + statusCode + "\'");
 
-        } catch (IOException e) {
+        } catch (IOException | InsufficientReqParamException e) {
             throw new CommandExecutionException(e);
         }
     }

@@ -50,12 +50,18 @@ public class GetQuestionPropertiesReqParams extends AbstractReqParams {
     }
 
     /**
-     * Constructor of {@link GetQuestionPropertiesReqParams}, with session key and question ID specified.
+     * Constructor of {@link GetQuestionPropertiesReqParams}, with session key, question ID and property keys
+     * specified.
      *
      * @param sessionKey the session key.
+     * @param questionId the question ID.
+     * @param propKeys   the property keys.
      */
     public GetQuestionPropertiesReqParams(final String sessionKey, final int questionId, final List<String> propKeys) {
         super(ConConstants.CMD_GET_QUESTION_PROPERTIES);
+        setSessionKey(sessionKey);
+        setQuestionId(questionId);
+        setPropKeys(propKeys);
     }
 
     public String getSessionKey() {

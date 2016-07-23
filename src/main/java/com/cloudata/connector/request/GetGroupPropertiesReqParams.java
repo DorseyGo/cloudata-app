@@ -38,7 +38,7 @@ public class GetGroupPropertiesReqParams extends AbstractReqParams {
     private List<String> propKeys;
 
     /**
-     * Constructor of {@link AbstractReqParams}, with session key, group id and property keys specified.
+     * Constructor of {@link GetGroupPropertiesReqParams}, with session key, group id and property keys specified.
      *
      * @param sessionKey the session key.
      * @param groupId    the group ID.
@@ -46,6 +46,9 @@ public class GetGroupPropertiesReqParams extends AbstractReqParams {
      */
     public GetGroupPropertiesReqParams(final String sessionKey, final int groupId, final List<String> propKeys) {
         super(ConConstants.CMD_GET_GROUP_PROPERTIES);
+        setSessionKey(sessionKey);
+        setGroupId(groupId);
+        setPropKeys(propKeys);
     }
 
     public String getSessionKey() {

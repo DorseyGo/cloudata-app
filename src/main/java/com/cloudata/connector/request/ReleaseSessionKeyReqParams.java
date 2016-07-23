@@ -10,6 +10,7 @@
 package com.cloudata.connector.request;
 
 import com.cloudata.connector.ConConstants;
+import com.cloudata.connector.annotations.NotNull;
 import com.cloudata.connector.annotations.Orderized;
 import com.cloudata.connector.annotations.Serialize;
 
@@ -24,6 +25,7 @@ public class ReleaseSessionKeyReqParams extends AbstractReqParams {
     /**
      * The session to be released.
      */
+    @NotNull
     @Serialize(name = ConConstants.SERIALIZED_SESSION_KEY)
     private String sessionKey;
 
@@ -63,5 +65,18 @@ public class ReleaseSessionKeyReqParams extends AbstractReqParams {
         int hashcode = PRIME + ((sessionKey == null || sessionKey.isEmpty()) ? 0 : sessionKey.hashCode());
 
         return hashcode;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || !(obj instanceof ReleaseSessionKeyReqParams))
+            return false;
+
+        ReleaseSessionKeyReqParams that = (ReleaseSessionKeyReqParams) obj;
+        boolean isEqualed = (sessionKey == null ? that.sessionKey == null : sessionKey.equals(that.sessionKey));
+
+        return isEqualed;
     }
 }

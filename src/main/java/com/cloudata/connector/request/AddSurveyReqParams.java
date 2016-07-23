@@ -10,6 +10,7 @@
 package com.cloudata.connector.request;
 
 import com.cloudata.connector.ConConstants;
+import com.cloudata.connector.annotations.NotNull;
 import com.cloudata.connector.annotations.Orderized;
 import com.cloudata.connector.annotations.Serialize;
 import com.cloudata.connector.structs.SurveyFormat;
@@ -25,6 +26,7 @@ public class AddSurveyReqParams extends AbstractReqParams {
     /**
      * The session key.
      */
+    @NotNull
     @Serialize(name = ConConstants.SERIALIZED_SESSION_KEY)
     private String sessionKey;
 
@@ -37,26 +39,31 @@ public class AddSurveyReqParams extends AbstractReqParams {
     /**
      * The survey title.
      */
+    @NotNull
     @Serialize(name = ConConstants.SERIALIZED_SURVEY_TITLE)
     private String surveyTitle;
 
     /**
      * The survey language.
      */
+    @NotNull
     @Serialize(name = ConConstants.SERIALIZED_SURVEY_LANGUAGE)
     private String surveyLanguage;
 
     /**
      * The survey format.
      */
+    @NotNull
     @Serialize(name = ConConstants.SERIALIZED_FORMAT)
     private String surveyFormat;
 
 
     /**
-     * Constructor of {@link AbstractReqParams}, with method specified.
+     * Constructor of {@link AddSurveyReqParams}, with session key, survey title and survey language specified.
      *
-     * @param method the method.
+     * @param sessionKey     the session key.
+     * @param surveyTitle    the survey title.
+     * @param surveyLanguage the survey language.
      */
     public AddSurveyReqParams(final String sessionKey, final String surveyTitle, final String surveyLanguage) {
         super(ConConstants.CMD_ADD_SURVEY);
