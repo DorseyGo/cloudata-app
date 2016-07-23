@@ -41,19 +41,12 @@ public class ReqConnector {
     /**
      * An instance of {@link HttpClientCreator}.
      */
-    private HttpClientCreator clientCreator;
+    private final HttpClientCreator clientCreator;
 
     /**
      * An instance of {@link HttpMethodCreator}.
      */
-    private HttpMethodCreator methodCreator;
-
-    /**
-     * Default constructor of {@link ReqConnector}.
-     */
-    public ReqConnector() {
-        this(new SimpleHttpClientCreator(), SimpleHttpMethodCreator.create(""));
-    }
+    private final HttpMethodCreator methodCreator;
 
     /**
      * Constructor of {@link ReqConnector}, with client creator and method creator specified.
@@ -115,11 +108,4 @@ public class ReqConnector {
         return connect(reqParams, callback, null);
     }
 
-    public void setClientCreator(final HttpClientCreator clientCreator) {
-        this.clientCreator = clientCreator;
-    }
-
-    public void setMethodCreator(final HttpMethodCreator methodCreator) {
-        this.methodCreator = methodCreator;
-    }
 }
