@@ -49,18 +49,18 @@
             <fieldname>relevance</fieldname>
         </fields>
         <rows>
-        <#list question.subquestions as children>
+        <#list question.answers as answer>
             <row>
-                <qid><![CDATA[${children.questionId}]]></qid>
+                <qid><![CDATA[${answer.questionId}]]></qid>
                 <parent_qid><![CDATA[${question.questionId}]]></parent_qid>
                 <sid><![CDATA[${question.surveyId}]]></sid>
                 <gid><![CDATA[${question.groupId}]]></gid>
-                <type><![CDATA[${children.type}]]></type>
-                <title><![CDATA[${children.title}]]></title>
-                <question><![CDATA[${children.question}]]></question>
-                <question_order><![CDATA[${children.questionOrder}]]></question_order>
+                <type><![CDATA[${answer.answerType}]]></type>
+                <title><![CDATA[${answer.code}]]></title>
+                <question><![CDATA[${answer.answer}]]></question>
+                <question_order><![CDATA[${answer.questionOrder}]]></question_order>
                 <language><![CDATA[${question.language}]]></language>
-                <relevance><![CDATA[${question.relevance}]]></relevance>
+                <relevance><![CDATA[${answer.relevance}]]></relevance>
             </row>
         </#list>
         </rows>
@@ -74,11 +74,11 @@
             <fieldname>defaultvalue</fieldname>
         </fields>
         <rows>
-        <#list question.subquestions as children>
+        <#list question.answers as answer>
             <#if children.default>
                 <row>
                     <qid><![CDATA[${question.questionId}]]></qid>
-                    <sqid><![CDATA[${children.questionId}]]></sqid>
+                    <sqid><![CDATA[${answer.questionId}]]></sqid>
                     <language><![CDATA[${question.language}]]></language>
                     <!-- indicates whether this is the default -->
                     <defaultvalue><![CDATA[Y]]></defaultvalue>

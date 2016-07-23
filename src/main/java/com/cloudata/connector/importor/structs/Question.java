@@ -10,32 +10,197 @@
 package com.cloudata.connector.importor.structs;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * An interface which declares all its subclasses represent a question.
+ * A class which declares that the instance of such is a question.
  * <p>
  * Author: DORSEy
  */
-public interface Question extends Serializable {
+public class Question implements Serializable {
 
     /**
-     * Returns the survey ID this question created to.
-     *
-     * @return the survey ID.
+     * The wished question ID.
      */
-    int getSurveyId();
+    private int questionId;
 
     /**
-     * Returns the group ID this question created to.
-     *
-     * @return the group ID.
+     * The parent of current question, 0 means no parents.
      */
-    int groupId();
+    private int parentQuestionId = 0;
 
     /**
-     * Returns the question type of this question.
-     *
-     * @return the question type.
+     * The survey ID.
      */
-    String getQuestionType();
+    private int surveyId;
+
+    /**
+     * The group ID.
+     */
+    private int groupId;
+
+    /**
+     * The type. Concrete question types, please refer to {@link com.cloudata.connector.structs.QuestionType}.
+     */
+    private String type;
+
+    /**
+     * The title of question.
+     */
+    private String questionTitle;
+
+    /**
+     * The question.
+     */
+    private String question;
+
+    /**
+     * indicates whether it is mandatory or not. "Y" for yes, "N" for no.
+     */
+    private String mandatory;
+
+    /**
+     * The language, determined when survey is created.
+     */
+    private String language;
+
+    /**
+     * The order of current question.
+     */
+    private int questionOrder = 0;
+
+    /**
+     * The answers belong to this question.
+     */
+    private List<Answer> answers;
+
+    /**
+     * Empty constructor of {@link Question}.
+     */
+    public Question() {
+        // empty constructor.
+    }
+
+    /**
+     * Constructor of {@link Question}, with survey Id, group Id, question and type specified.
+     *
+     * @param surveyId the survey ID.
+     * @param groupId  the group Id.
+     * @param question the question.
+     * @param type     the type.
+     */
+    public Question(final int surveyId, final int groupId, final String question, final String type) {
+        this(surveyId, groupId, question, type, null);
+    }
+
+    /**
+     * Constructor of {@link Question}, with survey Id, group Id, question, type and answers specified.
+     *
+     * @param surveyId the survey ID.
+     * @param groupId  the group Id.
+     * @param question the question.
+     * @param type     the type.
+     * @param answers  the answers.
+     */
+    public Question(final int surveyId, final int groupId, final String question, final String type, final List<Answer> answers) {
+        setSurveyId(surveyId);
+        setGroupId(groupId);
+        setQuestion(question);
+        setType(type);
+        setAnswers(answers);
+        setMandatory("N");
+    }
+
+    public int getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(final int questionId) {
+        this.questionId = questionId;
+    }
+
+    public int getParentQuestionId() {
+        return parentQuestionId;
+    }
+
+    public void setParentQuestionId(final int parentQuestionId) {
+        this.parentQuestionId = parentQuestionId;
+    }
+
+    public int getSurveyId() {
+        return surveyId;
+    }
+
+    public void setSurveyId(final int surveyId) {
+        this.surveyId = surveyId;
+    }
+
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(final int groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(final String type) {
+        this.type = type;
+    }
+
+    public String getQuestionTitle() {
+        return questionTitle;
+    }
+
+    public void setQuestionTitle(final String questionTitle) {
+        this.questionTitle = questionTitle;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(final String question) {
+        this.question = question;
+    }
+
+    public String getMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(final String mandatory) {
+        this.mandatory = mandatory;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(final String language) {
+        this.language = language;
+    }
+
+    public int getQuestionOrder() {
+        return questionOrder;
+    }
+
+    public void setQuestionOrder(final int questionOrder) {
+        this.questionOrder = questionOrder;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(final List<Answer> answers) {
+        this.answers = answers;
+    }
+
+    @Override
+    public String toString() {
+        return "surveyId: " + getSurveyId() + ", groupId: " + getGroupId() + ", question: " + getQuestion() + ", type: " + getType();
+    }
 }

@@ -9,6 +9,7 @@
 
 package com.cloudata.connector.importor;
 
+import com.cloudata.connector.structs.QuestionType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,10 +43,8 @@ public class QuestionGeneratorFactory {
     private static Map<String, QuestionGenerator> generators = new HashMap<>();
 
     static {
-        generators.put("l", new SingleChoiceQuestionGenerator());
-        generators.put("L", new SingleChoiceQuestionGenerator());
-        generators.put("m", new MultipleChoiceQuestionGenerator());
-        generators.put("M", new MultipleChoiceQuestionGenerator());
+        generators.put(QuestionType.SINGLE_CHOICE.getValue(), new SingleChoiceQuestionGenerator());
+        generators.put(QuestionType.MULTIPLE_CHOICES.getValue(), new MultipleChoiceQuestionGenerator());
     }
 
     private QuestionGeneratorFactory() {
@@ -73,6 +72,8 @@ public class QuestionGeneratorFactory {
         }
 
         QuestionGenerator generator = generators.get(questionType);
+        if (generator == null)
+            throw new IllegalArgumentException("No associated generator found according to the question type \'" + questionType + "\'");
 
         if (isDebugEnabled) {
             DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - generator = " + generator);

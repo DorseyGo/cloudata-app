@@ -77,6 +77,7 @@ abstract class AbstractQuestionGenerator implements QuestionGenerator {
             dataModel.put(DOC_ROOT, question);
             Template template = config.getTemplate(templateName);
 
+            writer = new StringWriter();
             template.process(dataModel, writer);
             out = writer.toString();
         } catch (TemplateException e) {

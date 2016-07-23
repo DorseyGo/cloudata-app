@@ -44,7 +44,7 @@
                 <qid><![CDATA[${answer.questionId}]]></qid>
                 <code><![CDATA[${answer.code}]]></code>
                 <answer><![CDATA[${answer.answer}]]></answer>
-                <language><![CDATA[${answer.language}]]></language>
+                <language><![CDATA[${question.language}]]></language>
             </row>
         </#list>
         </rows>
@@ -60,7 +60,7 @@
             <#if answer.default>
                 <row>
                     <qid><![CDATA[${answer.questionId}]]></qid>
-                    <language><![CDATA[${answer.language}]]></language>
+                    <language><![CDATA[${question.language}]]></language>
                     <defaultvalue><![CDATA[${answer.code}]]></defaultvalue>
                 </row>
             </#if>
