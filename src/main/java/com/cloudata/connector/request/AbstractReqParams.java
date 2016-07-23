@@ -10,8 +10,11 @@
 package com.cloudata.connector.request;
 
 import com.cloudata.connector.ConConstants;
+import com.cloudata.connector.annotations.NotNull;
+import com.cloudata.connector.annotations.Optional;
 import com.cloudata.connector.annotations.Orderized;
 import com.cloudata.connector.annotations.Serialize;
+import com.cloudata.connector.exception.InsufficientReqParamException;
 import com.cloudata.utils.ReflectionUtils;
 import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
@@ -62,7 +65,7 @@ abstract class AbstractReqParams implements ReqParams {
     }
 
     @Override
-    public StringEntity toStringEntity() throws UnsupportedEncodingException {
+    public StringEntity toStringEntity() throws UnsupportedEncodingException, InsufficientReqParamException {
         final String METHOD = "toStringEntity()";
         final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
         if (isDebugEnabled) {
@@ -109,7 +112,10 @@ abstract class AbstractReqParams implements ReqParams {
                     continue;
 
                 val = ReflectionUtils.getFieldValue(this, field);
-                serializedParams.put(item, val);
+                checkValidity(val, field);
+                boolean skipped = checkForIgnorance(val, field);
+                if (!skipped)
+                    serializedParams.put(item, val);
             }
         } else {
             Iterator<Map.Entry<String, Field>> entries = shouldBeSerialized.entrySet().iterator();
@@ -118,7 +124,10 @@ abstract class AbstractReqParams implements ReqParams {
                 String serializedName = entry.getKey();
                 Object val = ReflectionUtils.getFieldValue(this, entry.getValue());
 
-                serializedParams.put(serializedName, val);
+                checkValidity(val, entry.getValue());
+                boolean skipped = checkForIgnorance(val, entry.getValue());
+                if (!skipped)
+                    serializedParams.put(serializedName, val);
             }
         }
 
@@ -135,5 +144,14 @@ abstract class AbstractReqParams implements ReqParams {
         }
 
         return new StringEntity(content);
+    }
+
+    private boolean checkForIgnorance(final Object val, final Field field) {
+        return (field.isAnnotationPresent(Optional.class) && ((val instanceof Integer) ? ((Integer) val).intValue() <= 0 : val == null));
+    }
+
+    private void checkValidity(final Object val, final Field field) throws InsufficientReqParamException {
+        if (field.isAnnotationPresent(NotNull.class) && ((val instanceof Integer) ? ((Integer) val).intValue() <= 0 : val == null))
+            throw new InsufficientReqParamException("Parameter \'" + field.getName() + "\' should not be null");
     }
 }

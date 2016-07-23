@@ -10,6 +10,7 @@
 package com.cloudata.connector.request;
 
 import com.cloudata.connector.ConConstants;
+import com.cloudata.connector.annotations.NotNull;
 import com.cloudata.connector.annotations.Orderized;
 import com.cloudata.connector.annotations.Serialize;
 
@@ -25,12 +26,14 @@ public class ActivateSurveyReqParams extends AbstractReqParams {
     /**
      * The session key.
      */
+    @NotNull
     @Serialize(name = ConConstants.SERIALIZED_SESSION_KEY)
     private String sessionKey;
 
     /**
      * The survey ID
      */
+    @NotNull
     @Serialize(name = ConConstants.SERIALIZED_ISURVEY_ID)
     private int surveyId;
 

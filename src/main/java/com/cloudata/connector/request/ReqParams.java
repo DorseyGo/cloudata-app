@@ -9,6 +9,7 @@
 
 package com.cloudata.connector.request;
 
+import com.cloudata.connector.exception.InsufficientReqParamException;
 import org.apache.http.entity.StringEntity;
 
 import java.io.Serializable;
@@ -28,5 +29,5 @@ public interface ReqParams extends Serializable {
      *
      * @return a string entity representation.
      */
-    StringEntity toStringEntity() throws UnsupportedEncodingException;
+    StringEntity toStringEntity() throws UnsupportedEncodingException, InsufficientReqParamException;
 }

@@ -79,4 +79,17 @@ public interface ConConstants extends Serializable {
     String SERIALIZED_DESCRIPTION = "description";
     String SERIALIZED_LANGUAGE = "language";
     String SERIALIZED_GROUP_RELEVANCE = "grelevance";
+
+    String CMD_LIST_QUESTIONS = "list_questions";
+    String SERIALIZED_QUESTION_ID = "qid";
+    String SERIALIZED_TYPE = "type";
+    String SERIALIZED_TITLE = "title";
+    String SERIALIZED_QUESTION = "question";
+    String SERIALIZED_MANDATORY = "sMandatory";
+    String SERIALIZED_QUESTION_ORDER = "question_order";
+    String SERIALIZED_QUESTION_SETTINGS = "aQuestionSettings";
+    String SERIALIZED_SLANGUAGE = "sLanguage";
+    String CMD_GET_QUESTION_PROPERTIES = "get_question_properties";
+    String SERIALIZED_QUESTION_DATA = "aQuestionData";
+    String CMD_SET_QUESTION_PROPERTIES = "set_question_properties";
 }

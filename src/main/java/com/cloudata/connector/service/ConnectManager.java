@@ -170,5 +170,47 @@ public interface ConnectManager {
      */
     List<ListSurveysResponse> listSurveys(final ListSurveysReqParams reqParams) throws CommandExecutionException;
 
+    /**
+     * To invoke <tt>{@link com.cloudata.connector.ConConstants#CMD_LIST_GROUPS}</tt> on server side, and
+     * returns the response if the command executed successfully. It throws command execution exception if errors
+     * detected during procedure.
+     *
+     * @param reqParams the required request parameters to call the specific APIs.
+     * @return the response generated.
+     * @throws CommandExecutionException if errors detected during the procedure.
+     */
     List<ListGroupsResponse> listGroups(final ListGroupsReqParams reqParams) throws CommandExecutionException;
+
+    /**
+     * To invoke <tt>{@link com.cloudata.connector.ConConstants#CMD_LIST_QUESTIONS}</tt> on server side, and
+     * returns the response if the command executed successfully. It throws command execution exception if errors
+     * detected during procedure.
+     *
+     * @param reqParams the required request parameters to call the specific APIs.
+     * @return the response generated.
+     * @throws CommandExecutionException if errors detected during the procedure.
+     */
+    List<ListQuestionsResponse> listQuestions(final ListQuestionsReqParams reqParams) throws CommandExecutionException;
+
+    /**
+     * To invoke <tt>{@link com.cloudata.connector.ConConstants#CMD_LIST_QUESTIONS}</tt> on server side, and
+     * returns the response if the command executed successfully. It throws command execution exception if errors
+     * detected during procedure.
+     *
+     * @param reqParams the required request parameters to call the specific APIs.
+     * @return the response generated.
+     * @throws CommandExecutionException if errors detected during the procedure.
+     */
+    GetOrSetPropertiesResponse getQuestionProperties(final GetQuestionPropertiesReqParams reqParams) throws CommandExecutionException;
+
+    /**
+     * To invoke <tt>{@link com.cloudata.connector.ConConstants#CMD_LIST_QUESTIONS}</tt> on server side, and
+     * returns <tt>true</tt> if the command executed successfully. It throws command execution exception if errors
+     * detected during procedure.
+     *
+     * @param reqParams the required request parameters to call the specific APIs.
+     * @return true if and only if the command executed successfully.
+     * @throws CommandExecutionException if errors detected during the procedure.
+     */
+    boolean setQuestionProperties(final SetQuestionPropertiesReqParams reqParams) throws CommandExecutionException;
 }

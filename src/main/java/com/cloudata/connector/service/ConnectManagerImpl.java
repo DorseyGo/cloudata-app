@@ -65,18 +65,7 @@ public class ConnectManagerImpl implements ConnectManager {
     @Override
     public boolean setSurveyProperties(final SetSurveyPropertiesReqParams reqParams) throws CommandExecutionException {
         GetOrSetPropertiesResponse response = connector.connect(reqParams, new DefaultResultCallback<>(GetOrSetPropertiesResponse.class), new DefaultResultFilter());
-        Map<String, Object> props = response.getProps();
-        boolean succeed = true;
-        Iterator<Object> vals = props.values().iterator();
-        while (vals.hasNext()) {
-            Boolean val = (Boolean) vals.next();
-            succeed = succeed && val.booleanValue();
-            if (!succeed)
-                break;
-        }
-
-
-        return succeed;
+        return checkForTruth(response.getProps());
     }
 
     @Override
@@ -132,6 +121,38 @@ public class ConnectManagerImpl implements ConnectManager {
         ResponseDecorator<ListGroupsResponse> decorator = connector.connect(reqParams, new CollectionResultCallback<>(ListGroupsResponse.class), new DefaultResultFilter());
 
         return decorator.getRetResponse();
+    }
+
+    @Override
+    public List<ListQuestionsResponse> listQuestions(ListQuestionsReqParams reqParams) throws CommandExecutionException {
+        ResponseDecorator<ListQuestionsResponse> decorator = connector.connect(reqParams, new CollectionResultCallback<>(ListQuestionsResponse.class), new DefaultResultFilter());
+
+        return decorator.getRetResponse();
+    }
+
+    @Override
+    public GetOrSetPropertiesResponse getQuestionProperties(GetQuestionPropertiesReqParams reqParams) throws CommandExecutionException {
+        return connector.connect(reqParams, new DefaultResultCallback<>(GetOrSetPropertiesResponse.class), new DefaultResultFilter());
+    }
+
+    @Override
+    public boolean setQuestionProperties(SetQuestionPropertiesReqParams reqParams) throws CommandExecutionException {
+        GetOrSetPropertiesResponse response = connector.connect(reqParams, new DefaultResultCallback<>(GetOrSetPropertiesResponse.class), new DefaultResultFilter());
+        return checkForTruth(response.getProps());
+    }
+
+    // Hepler method to check whether it is succeed or not.
+    private boolean checkForTruth(final  Map<String, Object> src) {
+        boolean succeed = true;
+        Iterator<Object> vals = src.values().iterator();
+        while (vals.hasNext()) {
+            Boolean val = (Boolean) vals.next();
+            succeed = succeed && val.booleanValue();
+            if (!succeed)
+                break;
+        }
+
+        return succeed;
     }
 
     public void setConnector(final ReqConnector connector) {
