@@ -48,6 +48,7 @@ abstract class AbstractReqParams implements ReqParams {
     /**
      * The command to be send to the specific server.
      */
+    @NotNull
     @Serialize(name = ConConstants.SERIALIZED_METHOD)
     protected final String method;
 
@@ -93,7 +94,7 @@ abstract class AbstractReqParams implements ReqParams {
         });
 
 
-        // divide into two parts
+        // divide into three parts
         Map<String, Object> serialized = new LinkedHashMap<>();
         Object methodVal = ReflectionUtils.getFieldValue(this, shouldBeSerialized.remove(ConConstants.SERIALIZED_METHOD));
         serialized.put(ConConstants.SERIALIZED_METHOD, methodVal);

@@ -9,6 +9,7 @@
 
 package com.cloudata.connector.request;
 
+import com.cloudata.connector.exception.InsufficientReqParamException;
 import org.apache.http.entity.StringEntity;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,7 +23,7 @@ import java.io.UnsupportedEncodingException;
  */
 public class GetSessionKeyReqParamsTest {
     @Test
-    public void testToStringEntity() throws UnsupportedEncodingException {
+    public void testToStringEntity() throws UnsupportedEncodingException, InsufficientReqParamException {
         GetSessionKeyReqParams getSessionKeyReqParams = new GetSessionKeyReqParams("Dorsey", "tong");
         StringEntity entity = getSessionKeyReqParams.toStringEntity();
 

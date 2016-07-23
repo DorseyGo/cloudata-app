@@ -14,7 +14,6 @@ import com.cloudata.connector.annotations.NotNull;
 import com.cloudata.connector.annotations.Optional;
 import com.cloudata.connector.annotations.Orderized;
 import com.cloudata.connector.annotations.Serialize;
-import com.cloudata.connector.response.ListSurveysResponse;
 
 /**
  * The request parameters should be sent when command {@link ConConstants#CMD_LIST_SURVEYS} is executed on server side.

@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
  *
  * Author: DORSEy
  */
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Optional {
 }
