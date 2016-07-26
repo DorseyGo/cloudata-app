@@ -9,6 +9,9 @@
 
 package com.cloudata.connector.importor.structs;
 
+import com.cloudata.connector.structs.QuestionType;
+import com.cloudata.utils.StringUtils;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -18,6 +21,8 @@ import java.util.List;
  * Author: DORSEy
  */
 public class Question implements Serializable {
+
+    private static int count = 0;
 
     /**
      * The wished question ID.
@@ -67,7 +72,7 @@ public class Question implements Serializable {
     /**
      * The order of current question.
      */
-    private int questionOrder = 0;
+    private int questionOrder = count++;
 
     /**
      * The answers belong to this question.
@@ -89,7 +94,7 @@ public class Question implements Serializable {
      * @param question the question.
      * @param type     the type.
      */
-    public Question(final int surveyId, final int groupId, final String question, final String type) {
+    public Question(final int surveyId, final int groupId, final String question, final QuestionType type) {
         this(surveyId, groupId, question, type, null);
     }
 
@@ -102,13 +107,14 @@ public class Question implements Serializable {
      * @param type     the type.
      * @param answers  the answers.
      */
-    public Question(final int surveyId, final int groupId, final String question, final String type, final List<Answer> answers) {
+    public Question(final int surveyId, final int groupId, final String question, final QuestionType type, final List<Answer> answers) {
         setSurveyId(surveyId);
         setGroupId(groupId);
         setQuestion(question);
-        setType(type);
+        setType(type.getValue());
         setAnswers(answers);
         setMandatory("N");
+        setQuestionTitle("Q" + StringUtils.randomized(3));
     }
 
     public int getQuestionId() {

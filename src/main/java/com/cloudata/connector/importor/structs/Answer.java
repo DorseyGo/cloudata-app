@@ -18,6 +18,8 @@ import java.io.Serializable;
  */
 public class Answer implements Serializable {
 
+    private static int count = 0;
+
     /**
      * The question ID.
      */
@@ -46,7 +48,7 @@ public class Answer implements Serializable {
     /**
      * The ordering.
      */
-    private int order;
+    private int order = count++;
 
     /**
      * Empty constructor of {@link Answer}.

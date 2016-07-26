@@ -36,7 +36,7 @@ public class SingleChoiceQuestionGeneratorTest {
 
     @Test
     public void testGenerate() {
-        Question question = new Question(100, 100, "How are you?", QuestionType.SINGLE_CHOICE.getValue());
+        Question question = new Question(100, 100, "How are you?", QuestionType.SINGLE_CHOICE);
         question.setLanguage("en");
         question.setQuestionTitle("Hello");
 

@@ -17,7 +17,7 @@
             <fieldname>mandatory</fieldname>
             <fieldname>question_order</fieldname>
             <fieldname>language</fieldname>
-            <fieldname>relevance</fieldname>
+            <!-- <fieldname>relevance</fieldname> -->
         </fields>
         <rows>
             <row>
@@ -31,7 +31,7 @@
                 <mandatory><![CDATA[${question.mandatory}]]></mandatory>
                 <question_order><![CDATA[${question.questionOrder}]]></question_order>
                 <language><![CDATA[${question.language}]]></language>
-                <relevance><![CDATA[${question.relevance}]]></relevance>
+                <!-- <relevance><![CDATA[]]></relevance> -->
             </row>
         </rows>
     </questions>
@@ -46,7 +46,7 @@
             <fieldname>question</fieldname>
             <fieldname>question_order</fieldname>
             <fieldname>language</fieldname>
-            <fieldname>relevance</fieldname>
+            <!-- <fieldname>relevance</fieldname> -->
         </fields>
         <rows>
         <#list question.answers as answer>
@@ -58,9 +58,9 @@
                 <type><![CDATA[${answer.answerType}]]></type>
                 <title><![CDATA[${answer.code}]]></title>
                 <question><![CDATA[${answer.answer}]]></question>
-                <question_order><![CDATA[${answer.questionOrder}]]></question_order>
+                <question_order><![CDATA[${answer.order}]]></question_order>
                 <language><![CDATA[${question.language}]]></language>
-                <relevance><![CDATA[${answer.relevance}]]></relevance>
+                <!--<relevance><![CDATA[]]></relevance> -->
             </row>
         </#list>
         </rows>

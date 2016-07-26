@@ -15,11 +15,19 @@ package com.cloudata.connector.importor.structs;
 public class MultipleChoiceAnswer extends Answer {
     private final String answerType = "T";
 
+    private static int count = 0;
+
     /**
      * Empty constructor of {@link MultipleChoiceAnswer}.
      */
     public MultipleChoiceAnswer() {
         // empty constructor
+        this(null, null);
+    }
+
+    public MultipleChoiceAnswer(final String answer, final String code) {
+        super(answer, code);
+        setQuestionId((++count));
     }
 
     public String getAnswerType() {
