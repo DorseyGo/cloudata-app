@@ -10,6 +10,8 @@
 package com.cloudata.connector.importor.structs;
 
 /**
+ * Represents the multiple choice answers.
+ *
  * Author: DORSEy
  */
 public class MultipleChoiceAnswer extends Answer {
@@ -23,6 +25,15 @@ public class MultipleChoiceAnswer extends Answer {
     public MultipleChoiceAnswer() {
         // empty constructor
         this(null, null);
+    }
+
+    /**
+     * Constructor of {@link MultipleChoiceAnswer}, with answer specified.
+     *
+     * @param answer the answer.
+     */
+    public MultipleChoiceAnswer(final String answer) {
+        super(answer);
     }
 
     public MultipleChoiceAnswer(final String answer, final String code) {

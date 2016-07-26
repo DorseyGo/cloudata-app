@@ -9,6 +9,8 @@
 
 package com.cloudata.connector.importor.structs;
 
+import com.cloudata.utils.StringUtils;
+
 import java.io.Serializable;
 
 /**
@@ -55,6 +57,17 @@ public class Answer implements Serializable {
      */
     public Answer() {
         // empty constructor.
+        this(null);
+    }
+
+    /**
+     * Constructor of {@link Answer}, with answer specified and code being generated automatically.
+     *
+     * @param answer the answer.
+     */
+    public Answer(final String answer) {
+        this(answer, null);
+        setCode("A" + StringUtils.randomized(2));
     }
 
     /**
