@@ -45,6 +45,9 @@ public class QuestionGeneratorFactory {
     static {
         generators.put(QuestionType.SINGLE_CHOICE.getValue(), new SingleChoiceQuestionGenerator());
         generators.put(QuestionType.MULTIPLE_CHOICES.getValue(), new MultipleChoiceQuestionGenerator());
+        generators.put(QuestionType.FIVE_POINTS.getValue(), new FivePointsQuestionGenerator());
+        generators.put(QuestionType.SINGLE_CHOICE_WITH_COMMENT.getValue(), new SingleChoiceWithCommentQuestionGenerator());
+        generators.put(QuestionType.MATRIX_YES_UNCERTAIN_NO.getValue(), new MatrixYesUncertainNoQuestionGenerator());
     }
 
     private QuestionGeneratorFactory() {

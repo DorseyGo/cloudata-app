@@ -52,7 +52,7 @@
         <#list question.answers as answer>
             <row>
                 <qid><![CDATA[${answer.questionId}]]></qid>
-                <parent_qid><![CDATA[${question.questionId}]]></parent_qid>
+                <parent_qid><![CDATA[${question.parentQuestionId}]]></parent_qid>
                 <sid><![CDATA[${question.surveyId}]]></sid>
                 <gid><![CDATA[${question.groupId}]]></gid>
                 <type><![CDATA[${answer.answerType}]]></type>

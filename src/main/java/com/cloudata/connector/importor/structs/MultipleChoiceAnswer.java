@@ -9,6 +9,8 @@
 
 package com.cloudata.connector.importor.structs;
 
+import com.cloudata.utils.StringUtils;
+
 /**
  * Represents the multiple choice answers.
  *
@@ -33,11 +35,15 @@ public class MultipleChoiceAnswer extends Answer {
      * @param answer the answer.
      */
     public MultipleChoiceAnswer(final String answer) {
-        super(answer);
+        this(answer, null);
     }
 
     public MultipleChoiceAnswer(final String answer, final String code) {
         super(answer, code);
+        if (null == code || code.isEmpty()) {
+            setCode("A" + StringUtils.randomized(2));
+        }
+
         setQuestionId((++count));
     }
 

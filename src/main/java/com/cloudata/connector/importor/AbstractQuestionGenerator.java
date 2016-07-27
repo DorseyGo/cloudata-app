@@ -107,7 +107,11 @@ abstract class AbstractQuestionGenerator implements QuestionGenerator {
         return templatePath;
     }
 
-    public abstract void setTemplatePath(final String newTemplatePath);
+    public void setTemplatePath(final String newTemplatePath) {
+        this.templatePath = newTemplatePath;
+    }
 
-    public abstract void setTemplateName(final String newTemplateName);
+    public void setTemplateName(final String newTemplateName) {
+        this.templateName = newTemplateName;
+    }
 }

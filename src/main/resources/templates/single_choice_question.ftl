@@ -3,7 +3,7 @@
     <LimeSurveyDocType>Question</LimeSurveyDocType>
     <DBVersion>257</DBVersion>
     <languages>
-        <language>${question.language}</language>
+        <language><![CDATA[${question.language}]]></language>
     </languages>
     <questions>
         <fields>

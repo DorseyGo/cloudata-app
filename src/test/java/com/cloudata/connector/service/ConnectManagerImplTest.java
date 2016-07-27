@@ -23,6 +23,7 @@ import com.cloudata.connector.importor.structs.Question;
 import com.cloudata.connector.request.*;
 import com.cloudata.connector.response.*;
 import com.cloudata.connector.structs.QuestionType;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -291,6 +292,127 @@ public class ConnectManagerImplTest {
         return importData;
     }
 
+    @Test
+    public void testImport5PointsQuestion() {
+        // should be passed in when create a single-choice question
+        final int SURVEY_ID = 846936;
+        final int GROUP_ID = 7;
+
+        Question fivePointsQuestion = new Question(SURVEY_ID, GROUP_ID, "Is this 5 points question?", QuestionType.FIVE_POINTS);
+        fivePointsQuestion.setLanguage("en");
+        String importData = null;
+        QuestionGenerator generator = QuestionGeneratorFactory.getFactory().get(fivePointsQuestion.getType());
+        try {
+            importData = generator.generate(fivePointsQuestion);
+            Assert.assertTrue(true);
+        } catch (IOException e) {
+            Assert.assertTrue(false);
+        }
+
+        // import the question
+        ImportQuestionReqParams reqParams = new ImportQuestionReqParams(sesionKey, SURVEY_ID, GROUP_ID, importData);
+        ImportQuestionResponse response = null;
+        try {
+            response = manager.importQuestion(reqParams);
+            Assert.assertTrue(true);
+        } catch (CommandExecutionException e) {
+            Assert.assertTrue(false);
+        }
+
+        Assert.assertNotNull(response);
+        Assert.assertTrue(response.getQuestionId() > 0);
+        System.out.println(response.getQuestionId());
+    }
+
+    @Test
+    public void testImportSingleChoiceWithCommentsQuestion() {
+        // should be passed in when create a single-choice question
+        final int SURVEY_ID = 846936;
+        final int GROUP_ID = 7;
+
+        String importData = generateSingleChoiceWithComments(SURVEY_ID, GROUP_ID);
+        ImportQuestionReqParams reqParams = new ImportQuestionReqParams(sesionKey, SURVEY_ID, GROUP_ID, importData);
+        ImportQuestionResponse response = null;
+        try {
+            response = manager.importQuestion(reqParams);
+            Assert.assertTrue(true);
+        } catch (CommandExecutionException e) {
+            Assert.assertTrue(false);
+        }
+
+        Assert.assertTrue(response != null);
+        Assert.assertTrue(response.getQuestionId() > 0);
+        System.out.println(response.getQuestionId());
+    }
+
+    private String generateSingleChoiceWithComments(final int surveyId, final int groupId) {
+        Question sccQuestion = new Question(surveyId, groupId, "Is this a single choice question with comments?",QuestionType.SINGLE_CHOICE_WITH_COMMENT);
+        List<Answer> answers = new LinkedList<>();
+        Answer answer = new Answer("Yes");
+        answers.add(answer);
+
+        answer = new Answer("No");
+        answers.add(answer);
+
+        sccQuestion.setLanguage("en");
+        sccQuestion.setAnswers(answers);
+
+        String importData = null;
+        QuestionGenerator generator = QuestionGeneratorFactory.getFactory().get(sccQuestion.getType());
+        try {
+            importData = generator.generate(sccQuestion);
+            Assert.assertTrue(true);
+        } catch (IOException e) {
+            Assert.assertTrue(false);
+        }
+
+        return importData;
+    }
+
+    @Test
+    public void testMatrixYesUncertainNoQuestion() {
+        // should be passed in when create a single-choice question
+        final int SURVEY_ID = 846936;
+        final int GROUP_ID = 7;
+
+        String importData = generateMatrix(SURVEY_ID, GROUP_ID);
+        ImportQuestionReqParams reqParams = new ImportQuestionReqParams(sesionKey, SURVEY_ID, GROUP_ID, importData);
+        ImportQuestionResponse response = null;
+        try {
+            response = manager.importQuestion(reqParams);
+            Assert.assertTrue(true);
+        } catch (CommandExecutionException e) {
+            Assert.assertTrue(false);
+        }
+
+        Assert.assertNotNull(response);
+        Assert.assertTrue(response.getQuestionId() > 0);
+        System.out.println(response.getQuestionId());
+    }
+
+    private String generateMatrix(final int surveyId, final int groupId) {
+        Question question = new Question(surveyId, groupId, "Is this a matrix question for yes, uncertain, no?", QuestionType.MATRIX_YES_UNCERTAIN_NO);
+        List<Answer> answers = new LinkedList<>();
+        Answer answer = new MultipleChoiceAnswer("Manager is good?");
+        answers.add(answer);
+
+        answer = new MultipleChoiceAnswer("Environment is good?");
+        answers.add(answer);
+
+        question.setAnswers(answers);
+        question.setLanguage("en");
+
+        String importData = null;
+        QuestionGenerator generator = QuestionGeneratorFactory.getFactory().get(question.getType());
+        try {
+            importData = generator.generate(question);
+            Assert.assertTrue(true);
+        } catch (IOException e) {
+            Assert.assertTrue(false);
+        }
+
+        return importData;
+    }
 
     private void deleteSurvey(final int surveyId) {
         try {
