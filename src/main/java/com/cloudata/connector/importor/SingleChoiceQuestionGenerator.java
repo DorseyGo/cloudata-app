@@ -19,18 +19,21 @@ public class SingleChoiceQuestionGenerator extends AbstractQuestionGenerator {
     private static final String DEFAULT_TEMPLATE_NAME = "single_choice_question.ftl";
 
     /**
-     * Empty constructor of {@link SingleChoiceQuestionGenerator}, with template path and name being set as default.
+     * Empty constructor of {@link SingleChoiceQuestionGenerator}.
      */
     public SingleChoiceQuestionGenerator() {
-        setTemplatePath(DEFAULT_TEMPLATE_PATH);
-        setTemplateName(DEFAULT_TEMPLATE_NAME);
+        this(DEFAULT_TEMPLATE_PATH, DEFAULT_TEMPLATE_NAME);
     }
 
-    public void setTemplatePath(final String newTemplatePath) {
-        this.templatePath = newTemplatePath;
-    }
-
-    public void setTemplateName(final String newTemplateName) {
-        this.templateName = newTemplateName;
+    /**
+     * Constructor of {@link SingleChoiceQuestionGenerator}, with template path and name specified.
+     *
+     * @param templatePath the template path.
+     * @param templateName the template name.
+     */
+    public SingleChoiceQuestionGenerator(final String templatePath, final String templateName) {
+        super();
+        setTemplatePath(templatePath);
+        setTemplateName(templateName);
     }
 }

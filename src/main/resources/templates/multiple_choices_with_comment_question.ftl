@@ -65,26 +65,4 @@
         </#list>
         </rows>
     </subquestions>
-    <defaultvalues>
-        <fields>
-            <fieldname>qid</fieldname>
-            <fieldname>scale_id</fieldname>
-            <fieldname>sqid</fieldname>
-            <fieldname>language</fieldname>
-            <fieldname>defaultvalue</fieldname>
-        </fields>
-        <rows>
-        <#list question.answers as answer>
-            <#if children.default>
-                <row>
-                    <qid><![CDATA[${question.questionId}]]></qid>
-                    <sqid><![CDATA[${answer.questionId}]]></sqid>
-                    <language><![CDATA[${question.language}]]></language>
-                    <!-- indicates whether this is the default -->
-                    <defaultvalue><![CDATA[Y]]></defaultvalue>
-                </row>
-            </#if>
-        </#list>
-        </rows>
-    </defaultvalues>
 </document>

@@ -27,6 +27,9 @@ public enum QuestionType {
     // multiple choices without comments question.
     MULTIPLE_CHOICES("M"),
 
+    // multiple choices with comments question.
+    MULTIPLE_CHOICES_WITH_COMMENT("P"),
+
     // multiple choices with comments question
     MATRIX_YES_UNCERTAIN_NO("C");
 

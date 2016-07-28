@@ -20,20 +20,22 @@ public class MultipleChoiceQuestionGenerator extends AbstractQuestionGenerator {
     private static final String DEFAULT_TEMPLATE_NAME = "multiple_choices_question.ftl";
 
     /**
-     * Empty constructor of {@link MultipleChoiceQuestionGenerator}, with default template path and name being set.
+     * Empty constructor of {@link MultipleChoiceQuestionGenerator}.
      */
     public MultipleChoiceQuestionGenerator() {
-        setTemplatePath(DEFAULT_TEMPLATE_PATH);
-        setTemplateName(DEFAULT_TEMPLATE_NAME);
+        this(DEFAULT_TEMPLATE_PATH, DEFAULT_TEMPLATE_NAME);
     }
 
-    @Override
-    public void setTemplatePath(String newTemplatePath) {
-        this.templatePath = newTemplatePath;
+    /**
+     * Constructor of {@link MultipleChoiceQuestionGenerator}, with template path and name specified.
+     *
+     * @param templatePath the template path.
+     * @param templateName the template name.
+     */
+    public MultipleChoiceQuestionGenerator(final String templatePath, final String templateName) {
+        super();
+        setTemplatePath(templatePath);
+        setTemplateName(templateName);
     }
 
-    @Override
-    public void setTemplateName(String newTemplateName) {
-        this.templateName = newTemplateName;
-    }
 }

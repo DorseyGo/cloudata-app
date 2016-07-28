@@ -414,6 +414,54 @@ public class ConnectManagerImplTest {
         return importData;
     }
 
+    @Test
+    public void testImportMultipleChoicesWithCommentQuestion() {
+        // should be passed in when create a single-choice question
+        final int SURVEY_ID = 846936;
+        final int GROUP_ID = 7;
+
+        String importData = generateMultiQuestionWithComments(SURVEY_ID, GROUP_ID);
+        ImportQuestionResponse response = null;
+        ImportQuestionReqParams reqParams = new ImportQuestionReqParams(sesionKey, SURVEY_ID, GROUP_ID, importData);
+        try {
+            response = manager.importQuestion(reqParams);
+            Assert.assertTrue(true);
+        } catch (CommandExecutionException e) {
+            Assert.assertTrue(false);
+        }
+
+        Assert.assertNotNull(response);
+        Assert.assertTrue(response.getQuestionId() > 0);
+        System.out.println(response.getQuestionId());
+    }
+
+    private String generateMultiQuestionWithComments(final int surveyId, final int groupId) {
+        Question question = new Question(surveyId, groupId, "Is this a multiple choices question with comments?", QuestionType.MULTIPLE_CHOICES_WITH_COMMENT);
+        List<Answer> answers = new LinkedList<>();
+        Answer answer = new MultipleChoiceAnswer("Yes");
+        answers.add(answer);
+
+        answer = new MultipleChoiceAnswer("Uncertain");
+        answers.add(answer);
+
+        answer = new MultipleChoiceAnswer("No");
+        answers.add(answer);
+
+        question.setLanguage("en");
+        question.setAnswers(answers);
+
+        String importData = null;
+        QuestionGenerator generator = QuestionGeneratorFactory.getFactory().get(question.getType());
+        try {
+            importData = generator.generate(question);
+            Assert.assertTrue(true);
+        } catch (IOException e) {
+            Assert.assertTrue(false);
+        }
+
+        return importData;
+    }
+
     private void deleteSurvey(final int surveyId) {
         try {
             boolean succeed = manager.deleteSurvey(new DeleteSurveyReqParams(sesionKey, surveyId));
