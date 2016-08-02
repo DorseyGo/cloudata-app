@@ -9,30 +9,44 @@
 
 package com.cloudata.http.view;
 
-import java.io.Serializable;
+import com.cloudata.CloudataConstants;
+import com.cloudata.connector.annotations.Serialize;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * <p>
  * Author: DORSEy
  */
-abstract class RespView implements Serializable {
+public class RespView implements View {
 
     /**
      * The status code. 1 for success, 0 for failure.
      */
-    protected final int statusCode;
+    @Expose
+    @SerializedName(CloudataConstants.REQ_SERIALIZED_STATUS_CODE)
+    private final int statusCode;
 
     /**
      * The reason phase which indicates of why it failed.
      */
-    protected String reasonPhase;
+    @Expose
+    @SerializedName(CloudataConstants.REQ_SERIALIZED_REASON_PHASE)
+    private String reasonPhase;
+
+    /**
+     * The body.
+     */
+    @Expose
+    @SerializedName(CloudataConstants.REQ_SERIALIZED_BODY)
+    private RespBodyView bodyView;
 
     /**
      * Constructor of {@link RespView}, with status code specified.
      *
      * @param statusCode the status code.
      */
-    protected RespView(final int statusCode) {
+    public RespView(final int statusCode) {
         this(statusCode, null);
     }
 
@@ -42,7 +56,7 @@ abstract class RespView implements Serializable {
      * @param statusCode  the status code.
      * @param reasonPhase the reason phase.
      */
-    protected RespView(final int statusCode, final String reasonPhase) {
+    public RespView(final int statusCode, final String reasonPhase) {
         this.statusCode = statusCode;
         setReasonPhase(reasonPhase);
     }
@@ -59,4 +73,11 @@ abstract class RespView implements Serializable {
         this.reasonPhase = reasonPhase;
     }
 
+    public RespBodyView getBodyView() {
+        return bodyView;
+    }
+
+    public void setBodyView(final RespBodyView bodyView) {
+        this.bodyView = bodyView;
+    }
 }
