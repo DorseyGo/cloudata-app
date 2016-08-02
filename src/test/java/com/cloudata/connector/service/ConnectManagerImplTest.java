@@ -23,7 +23,6 @@ import com.cloudata.connector.importor.structs.Question;
 import com.cloudata.connector.request.*;
 import com.cloudata.connector.response.*;
 import com.cloudata.connector.structs.QuestionType;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
