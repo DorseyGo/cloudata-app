@@ -11,7 +11,7 @@
     <mvc:annotation-driven />
 
     <!-- specify from which spring will scan for components -->
-    <context:component-scan base-package="com.cloudata.app" />
+    <context:component-scan base-package="com.cloudata" />
 
     <!-- using this to handle static resource request -->
     <mvc:default-servlet-handler />
@@ -20,11 +20,8 @@
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
 
-    <!-- specify the resource view resolver -->
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/jsp" />
-        <property name="suffix" value=".jsp" />
-        <!-- define the order of the view resolver -->
-        <property name="order" value="0" />
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="fileEncoding" value="UTF-8" />
+        <property name="location" value="classpath:limesurvey_sever.properties" />
     </bean>
 </beans>

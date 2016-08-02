@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <bean id="clientCreator" class="com.cloudata.connector.creator.impl.SimpleHttpClientCreator"/>
 
+    <bean id="methodCreator" class="com.cloudata.connector.creator.impl.SimpleHttpMethodCreator"
+          factory-method="create">
+        <constructor-arg type="java.lang.String" value="${SERVER_URL_ADDR}"></constructor-arg>
+    </bean>
 
+    <bean id="connector" class="com.cloudata.connector.ReqConnector">
+        <constructor-arg type="com.cloudata.connector.creator.HttpClientCreator" ref="clientCreator"/>
+        <constructor-arg type="com.cloudata.connector.creator.HttpMethodCreator" ref="methodCreator"/>
+    </bean>
 
+    <bean id="connectManager" class="com.cloudata.connector.service.ConnectManagerImpl">
+        <property name="connector" ref="connector" />
+    </bean>
 </beans>

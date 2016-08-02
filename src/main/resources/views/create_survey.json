@@ -1,0 +1,8 @@
+{
+  "statusCode" : 1,
+  "reasonPhase" : null,
+  "body" : {
+    "surveyId": 11,
+    "groupId" : 12
+  }
+}
