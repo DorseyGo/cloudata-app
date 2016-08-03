@@ -9,13 +9,14 @@
 
 package com.cloudata.http.service;
 
-import com.cloudata.connector.exception.CommandExecutionException;
-import com.cloudata.connector.exception.InsufficientReqParamException;
-import com.cloudata.http.view.RespView;
+import com.cloudata.http.view.AddSurveyRespView;
+import com.cloudata.http.view.BooleanRespView;
 
 /**
  * Author: DORSEy
  */
 public interface SurveyManager {
-    RespView addSurvey(final String accountName, final String surveyName) throws CommandExecutionException, InsufficientReqParamException;
+    AddSurveyRespView addSurvey(final String sessionKey, final String surveyName);
+
+    BooleanRespView deleteSurvey(final String sessionKey, final int surveyId);
 }

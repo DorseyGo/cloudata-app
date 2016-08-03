@@ -10,15 +10,9 @@
 package com.cloudata.http.controller;
 
 import com.cloudata.CloudataConstants;
-import com.cloudata.connector.exception.CommandExecutionException;
-import com.cloudata.connector.exception.InsufficientReqParamException;
-import com.cloudata.http.service.SurveyManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.ServletRequestBindingException;
-import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,9 +41,6 @@ public class SurveyController {
      */
     private static final Log ERROR = LogFactory.getLog("ERROR." + CNAME);
 
-    @Autowired
-    private SurveyManager surveyManager;
-
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/survey", method = RequestMethod.POST, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
     public void addSurvey(final HttpServletRequest request) {
@@ -59,20 +50,6 @@ public class SurveyController {
             DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - request = " + request);
         }
 
-        String surveyName = null;
-        try {
-            surveyName = ServletRequestUtils.getStringParameter(request, CloudataConstants.REQ_ATTR_SURVEY_NAME);
-        } catch (ServletRequestBindingException e) {
-            if (ERROR.isErrorEnabled()) {
-                ERROR.error(CNAME + "#" + METHOD + ": ERROR - Failed to get parameter \'" + CloudataConstants.REQ_ATTR_SURVEY_NAME + "\' from request" + e);
-            }
-        }
-
-        try {
-            surveyManager.addSurvey((String) request.getSession().getAttribute("username"), surveyName);
-        } catch (CommandExecutionException | InsufficientReqParamException e) {
-
-        }
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -89,8 +66,14 @@ public class SurveyController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/surveys/{surveyId}", method = RequestMethod.DELETE, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
-    public void deleteSurvey(final int surveyId) {
+    public void deleteSurvey(final int surveyId, final HttpServletRequest request) {
+        final String METHOD = "deleteSurvey(int, HttpServletRequest)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - surveyId = " + surveyId + ", request = " + request);
+        }
 
+        //request.getUserPrincipal();
     }
 
     @ResponseStatus(HttpStatus.OK)

@@ -11,29 +11,16 @@ package com.cloudata.http.service.impl;
 
 import com.cloudata.CloudataConstants;
 import com.cloudata.connector.exception.CommandExecutionException;
-import com.cloudata.connector.exception.InsufficientReqParamException;
-import com.cloudata.connector.request.AddGroupReqParams;
-import com.cloudata.connector.request.AddSurveyReqParams;
-import com.cloudata.connector.request.GetSessionKeyReqParams;
-import com.cloudata.connector.response.AddGroupResponse;
-import com.cloudata.connector.response.AddSurveyResponse;
-import com.cloudata.connector.response.GetSessionKeyResponse;
+import com.cloudata.connector.request.DeleteSurveyReqParams;
 import com.cloudata.connector.service.ConnectManager;
 import com.cloudata.http.service.SurveyManager;
-import com.cloudata.http.structs.TimedSession;
 import com.cloudata.http.view.AddSurveyRespView;
-import com.cloudata.http.view.RespView;
-import com.cloudata.utils.StringUtils;
+import com.cloudata.http.view.BooleanRespView;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * An implementation of {@link SurveyManager}.
@@ -43,96 +30,58 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service("surveyManager")
 public class SurveyManagerImpl implements SurveyManager {
 
-    @Autowired
-    private ConnectManager connectManager;
-
-    /**
-     * A cache to buffer username/sessionkey pair.
-     */
-    private static Map<String, TimedSession> sessionKeyCache = new ConcurrentHashMap<>();
-
     /**
      * The class name.
      */
     private static final String CNAME = SurveyManagerImpl.class.getName();
 
     /**
-     * The log tracker to log down the DEBUG level message.
+     * The debugger to log down debug level message.
      */
     private static final Log DEBUGGER = LogFactory.getLog("DEBUGGER." + CNAME);
 
-    @Value("")
-    private String username;
+    /**
+     * The error recorder to log down error level message.
+     */
+    private static final Log ERROR = LogFactory.getLog("ERROR." + CNAME);
 
-    @Value("")
-    private String password;
-
-    @Value("")
-    private String language;
+    @Autowired
+    private ConnectManager connectManager;
 
     @Override
-    public RespView addSurvey(final String accountName, final String surveyName) throws CommandExecutionException, InsufficientReqParamException {
-        final String METHOD = "addSurvey(String, String)";
-        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
-        if (isDebugEnabled) {
-            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - accountName = " + accountName + ", surveyName = " + surveyName);
-        }
-
-        String sessionKey = checkAndReturn(accountName);
-        AddSurveyReqParams reqParams = new AddSurveyReqParams(sessionKey, surveyName, language);
-        AddSurveyResponse addSurveyResponse = connectManager.addSurvey(reqParams);
-        int surveyId = addSurveyResponse.getSurveyId();
-
-        String groupName = "G" + StringUtils.randomized(3);
-        AddGroupReqParams addGroupReqParams = new AddGroupReqParams(sessionKey, surveyId, groupName);
-        AddGroupResponse addGroupResponse = connectManager.addGroup(addGroupReqParams);
-        int groupId = addGroupResponse.getGroupId();
-
-        RespView addSurveyRespView = new RespView(CloudataConstants.REQ_OK);
-        AddSurveyRespView body = new AddSurveyRespView(surveyId, groupId);
-        addSurveyRespView.setBodyView(body);
-
-        if (isDebugEnabled) {
-            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - addSurveyRespView = " + addSurveyRespView);
-        }
-
-        return addSurveyRespView;
+    public AddSurveyRespView addSurvey(final String sessionKey, final String surveyName) {
+        return null;
     }
 
-    private String checkAndReturn(final String accountName) throws CommandExecutionException {
-        final String METHOD = "checkAndReturn(String)";
+    @Override
+    public BooleanRespView deleteSurvey(final String sessionKey, final int surveyId) {
+        final String METHOD = "deleteSurvey(String, int)";
         final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
         if (isDebugEnabled) {
-            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - accountName = " + accountName);
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", surveyId = " + surveyId);
         }
 
-        String sessionKey = null;
-        TimedSession timedSession = sessionKeyCache.get(accountName);
-        if (timedSession != null && !(isExpired(timedSession.getCreatedTime()))) {
-            return timedSession.getSessionKey();
+        boolean succeed = false;
+        String message = null;
+        DeleteSurveyReqParams reqParams = new DeleteSurveyReqParams(sessionKey, surveyId);
+        try {
+            succeed = connectManager.deleteSurvey(reqParams);
+        } catch (CommandExecutionException e) {
+            message = "Failed to delete survey \'" + surveyId + "\'";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            succeed = false;
         }
 
-        // TODO retrieve it from database.
-        GetSessionKeyResponse response = connectManager.getSessionKey(new GetSessionKeyReqParams(username, password));
-        sessionKey = response.getSessionKey();
+        int code = (succeed) ? CloudataConstants.REQ_OK : CloudataConstants.REQ_FAILED;
+        BooleanRespView view = new BooleanRespView(HttpStatus.SC_OK, code, message);
 
         if (isDebugEnabled) {
-            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - sessionKey = " + sessionKey);
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - view = " + view);
         }
 
-        return sessionKey;
-    }
-
-    private boolean isExpired(final Date createdTime) {
-        Calendar createdCalendar = Calendar.getInstance();
-        createdCalendar.setTime(createdTime);
-        createdCalendar.add(Calendar.HOUR, 2);
-
-        Calendar now = Calendar.getInstance();
-        now.setTime(new Date());
-
-        boolean isExpired = now.after(createdCalendar);
-
-        return isExpired;
+        return view;
     }
 }
