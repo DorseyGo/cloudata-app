@@ -20,7 +20,9 @@ public interface CloudataConstants {
     String RESP_VIEW_SURVEY_ID = "surveyId";
     String RESP_VIEW_GROUP_ID = "groupId";
     int REQ_OK = 1;
-    String REQ_SERIALIZED_STATUS_CODE = "statusCode";
-    String REQ_SERIALIZED_REASON_PHASE = "reasonPhase";
-    String REQ_SERIALIZED_BODY = "body";
+
+    String RESP_VIEW_STATUS = "status";
+    String RESP_VIEW_CODE = "code";
+    String RESP_VIEW_ERROR_MESSAGE = "errorMessage";
+    int REQ_FAILED = 0;
 }

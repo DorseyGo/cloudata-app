@@ -9,75 +9,33 @@
 
 package com.cloudata.http.view;
 
-import com.cloudata.CloudataConstants;
-import com.cloudata.connector.annotations.Serialize;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
 
 /**
+ * An interface, which declares that its subclasses are responded views.
  * <p>
  * Author: DORSEy
  */
-public class RespView implements View {
+public interface RespView extends Serializable {
 
     /**
-     * The status code. 1 for success, 0 for failure.
-     */
-    @Expose
-    @SerializedName(CloudataConstants.REQ_SERIALIZED_STATUS_CODE)
-    private final int statusCode;
-
-    /**
-     * The reason phase which indicates of why it failed.
-     */
-    @Expose
-    @SerializedName(CloudataConstants.REQ_SERIALIZED_REASON_PHASE)
-    private String reasonPhase;
-
-    /**
-     * The body.
-     */
-    @Expose
-    @SerializedName(CloudataConstants.REQ_SERIALIZED_BODY)
-    private RespBodyView bodyView;
-
-    /**
-     * Constructor of {@link RespView}, with status code specified.
+     * Returns the status code, which indicates whether the server is working properly.
      *
-     * @param statusCode the status code.
+     * @return the status code.
      */
-    public RespView(final int statusCode) {
-        this(statusCode, null);
-    }
+    int getStatus();
 
     /**
-     * Constructor of {@link RespView}, with status code and reason phase specified.
+     * Returns the code, which indicates why the request is proceed failed.
      *
-     * @param statusCode  the status code.
-     * @param reasonPhase the reason phase.
+     * @return the code.
      */
-    public RespView(final int statusCode, final String reasonPhase) {
-        this.statusCode = statusCode;
-        setReasonPhase(reasonPhase);
-    }
+    int getCode();
 
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public String getReasonPhase() {
-        return reasonPhase;
-    }
-
-    public void setReasonPhase(final String reasonPhase) {
-        this.reasonPhase = reasonPhase;
-    }
-
-    public RespBodyView getBodyView() {
-        return bodyView;
-    }
-
-    public void setBodyView(final RespBodyView bodyView) {
-        this.bodyView = bodyView;
-    }
+    /**
+     * Returns the error message, which indicates why it failed.
+     *
+     * @return the error message.
+     */
+    String getErrorMessage();
 }

@@ -18,7 +18,7 @@ import com.google.gson.annotations.SerializedName;
  * <p>
  * Author: DORSEy
  */
-public class AddSurveyRespView implements RespBodyView {
+public class AddSurveyRespView extends AbstractRespView {
 
     /**
      * The survey ID.
@@ -38,18 +38,18 @@ public class AddSurveyRespView implements RespBodyView {
      * Empty constructor of {@link AddSurveyRespView}.
      */
     public AddSurveyRespView() {
-        this(-1, -1);
+        super();
     }
 
     /**
-     * Constructor of {@link AddSurveyRespView}, with survey ID and group ID specified.
+     * Constructor of {@link AddSurveyRespView}, with status, code and error message specified.
      *
-     * @param surveyId the survey ID.
-     * @param groupId  the group ID.
+     * @param status       the status.
+     * @param code         the code.
+     * @param errorMessage the error message.
      */
-    public AddSurveyRespView(final int surveyId, final int groupId) {
-        setSurveyId(surveyId);
-        setGroupId(groupId);
+    public AddSurveyRespView(final int status, final int code, final String errorMessage) {
+        super(status, code, errorMessage);
     }
 
     public int getSurveyId() {
@@ -70,19 +70,22 @@ public class AddSurveyRespView implements RespBodyView {
 
     @Override
     public String toString() {
-        return "surveyId: " + getSurveyId() + ", groupId: " + getGroupId();
+        return super.toString() + ", surveyId: " + getSurveyId() + ", groupId: " + getGroupId();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (obj == this)
             return true;
 
         if (obj == null || !(obj instanceof AddSurveyRespView))
             return false;
 
         AddSurveyRespView that = (AddSurveyRespView) obj;
-        boolean isEqualed = (surveyId == that.surveyId);
+        boolean isEqualed = (status == that.status);
+        isEqualed = isEqualed && (code == that.code);
+        isEqualed = isEqualed && (errorMessage == null ? that.errorMessage == null : errorMessage.equals(that.errorMessage));
+        isEqualed = isEqualed && (surveyId == that.surveyId);
         isEqualed = isEqualed && (groupId == that.groupId);
 
         return isEqualed;
@@ -91,9 +94,9 @@ public class AddSurveyRespView implements RespBodyView {
     @Override
     public int hashCode() {
         final int PRIME = 31;
-        int hashcode = PRIME + (surveyId);
-        hashcode += PRIME + (groupId);
+        int hashcode = PRIME + surveyId;
+        hashcode += PRIME + groupId;
 
-        return hashcode;
+        return (super.hashCode() + hashcode);
     }
 }
