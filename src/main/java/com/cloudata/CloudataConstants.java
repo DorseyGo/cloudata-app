@@ -25,4 +25,6 @@ public interface CloudataConstants {
     String RESP_VIEW_CODE = "code";
     String RESP_VIEW_ERROR_MESSAGE = "errorMessage";
     int REQ_FAILED = 0;
+
+    String RESP_VIEW_SURVEY = "survey";
 }

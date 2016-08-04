@@ -18,4 +18,8 @@
     <bean id="connectManager" class="com.cloudata.connector.service.ConnectManagerImpl">
         <property name="connector" ref="connector" />
     </bean>
+
+    <bean id="surveyManager" class="com.cloudata.http.service.impl.SurveyManagerImpl">
+        <property name="connectManager" ref="connectManager" />
+    </bean>
 </beans>

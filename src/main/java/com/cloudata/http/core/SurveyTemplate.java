@@ -20,10 +20,13 @@ import com.cloudata.http.view.RespView;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 /**
  * Author: DORSEy
  */
+@Service("surveyTemplate")
 public final class SurveyTemplate {
 
     /**
@@ -39,11 +42,13 @@ public final class SurveyTemplate {
     /**
      * The username.
      */
+    @Value("${ADMIN_NAME}")
     private String username;
 
     /**
      * The password.
      */
+    @Value("${ADMIN_PASSWD}")
     private String password;
 
     @Autowired

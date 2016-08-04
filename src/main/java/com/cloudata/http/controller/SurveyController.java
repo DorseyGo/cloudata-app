@@ -10,8 +10,14 @@
 package com.cloudata.http.controller;
 
 import com.cloudata.CloudataConstants;
+import com.cloudata.http.callback.impl.DeleteSurveyCallback;
+import com.cloudata.http.core.SurveyTemplate;
+import com.cloudata.http.exception.ServiceException;
+import com.cloudata.http.view.BooleanRespView;
+import com.cloudata.utils.JsonUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +47,9 @@ public class SurveyController {
      */
     private static final Log ERROR = LogFactory.getLog("ERROR." + CNAME);
 
+    @Autowired
+    private SurveyTemplate surveyTemplate;
+
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/survey", method = RequestMethod.POST, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
     public void addSurvey(final HttpServletRequest request) {
@@ -66,7 +75,7 @@ public class SurveyController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/surveys/{surveyId}", method = RequestMethod.DELETE, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
-    public void deleteSurvey(final int surveyId, final HttpServletRequest request) {
+    public String deleteSurvey(@PathVariable("surveyId") final int surveyId, final HttpServletRequest request) {
         final String METHOD = "deleteSurvey(int, HttpServletRequest)";
         final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
         if (isDebugEnabled) {
@@ -74,6 +83,25 @@ public class SurveyController {
         }
 
         //request.getUserPrincipal();
+        BooleanRespView view = null;
+        try {
+            view = surveyTemplate.execute(new DeleteSurveyCallback(surveyId));
+        } catch (ServiceException e) {
+            final String message = e.getMessage();
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            view = new BooleanRespView(org.apache.http.HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
+        }
+
+        String json = JsonUtils.toJson(view);
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - json = " + json);
+        }
+
+        return json;
     }
 
     @ResponseStatus(HttpStatus.OK)

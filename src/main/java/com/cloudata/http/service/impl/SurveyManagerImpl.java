@@ -16,6 +16,7 @@ import com.cloudata.connector.service.ConnectManager;
 import com.cloudata.http.service.SurveyManager;
 import com.cloudata.http.view.AddSurveyRespView;
 import com.cloudata.http.view.BooleanRespView;
+import com.cloudata.http.view.GetSurveyRespView;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpStatus;
@@ -45,7 +46,6 @@ public class SurveyManagerImpl implements SurveyManager {
      */
     private static final Log ERROR = LogFactory.getLog("ERROR." + CNAME);
 
-    @Autowired
     private ConnectManager connectManager;
 
     @Override
@@ -83,5 +83,22 @@ public class SurveyManagerImpl implements SurveyManager {
         }
 
         return view;
+    }
+
+    @Override
+    public GetSurveyRespView getSurvey(final String sessionKey, final int surveyId) {
+        final String METHOD = "getSurvey(String, int)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", surveyId = " + surveyId);
+        }
+
+
+
+        return null;
+    }
+
+    public void setConnectManager(final ConnectManager connectManager) {
+        this.connectManager = connectManager;
     }
 }
