@@ -23,4 +23,6 @@ public interface SurveyDao extends BasicDao {
     List<SurveyModel> listSurveys(@Param("offset") final int offset, @Param("limit") final int limit, @Param("owner") final String owner);
 
     int count(@Param("owner") final String owner);
+
+    SurveyModel querySurveyById(@Param("surveyId") final int surveyId);
 }

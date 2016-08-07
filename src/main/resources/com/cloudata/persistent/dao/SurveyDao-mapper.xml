@@ -25,4 +25,8 @@
             LEFT JOIN lime_users AS lu ON ls.owner_id = lu.uid AND lu.users_name = #{owner, jdbcType=VARCHAR}
         </if>
     </select>
+
+    <select id="querySurveyById" parameterType="int" resultMap="surveyModel">
+        SELECT ls.sid, lsl.surveyls_title AS surveyTitle, ls.startdate, ls.expires, ls.active FROM lime_surveys AS ls LEFT JOIN lime_surveys_languagesettings AS lsl ON ls.sid = lsl.surveyls_survey_id WHERE ls.sid = #{surveyId}
+    </select>
 </mapper>

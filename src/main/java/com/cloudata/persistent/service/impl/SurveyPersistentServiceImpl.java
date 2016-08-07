@@ -13,6 +13,7 @@ import com.cloudata.persistent.bean.SurveyModel;
 import com.cloudata.persistent.dao.SurveyDao;
 import com.cloudata.persistent.service.SurveyPersistentService;
 import com.cloudata.persistent.structs.Pagination;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -44,4 +45,8 @@ public class SurveyPersistentServiceImpl implements SurveyPersistentService {
         return new Pagination<>(currentPage, totalCount, surveys);
     }
 
+    @Override
+    public SurveyModel queryForSurvey(final int surveyId) {
+        return surveyDao.querySurveyById(surveyId);
+    }
 }

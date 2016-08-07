@@ -23,4 +23,6 @@ public interface SurveyPersistentService {
     int count(final String owner);
 
     Pagination<SurveyModel> paginate(final int currentPage, final int pageSize, final String owner);
+
+    SurveyModel queryForSurvey(final int surveyId);
 }

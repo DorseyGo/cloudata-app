@@ -11,8 +11,11 @@ package com.cloudata.http.service.impl;
 
 import com.cloudata.CloudataConstants;
 import com.cloudata.connector.exception.CommandExecutionException;
+import com.cloudata.connector.request.AddGroupReqParams;
+import com.cloudata.connector.request.AddSurveyReqParams;
 import com.cloudata.connector.request.DeleteSurveyReqParams;
 import com.cloudata.connector.request.ListQuestionsReqParams;
+import com.cloudata.connector.response.AddSurveyResponse;
 import com.cloudata.connector.response.ListQuestionsResponse;
 import com.cloudata.connector.service.ConnectManager;
 import com.cloudata.http.converter.ViewUtils;
@@ -21,15 +24,12 @@ import com.cloudata.http.view.*;
 import com.cloudata.persistent.bean.SurveyModel;
 import com.cloudata.persistent.service.SurveyPersistentService;
 import com.cloudata.persistent.structs.Pagination;
-import com.cloudata.utils.ReflectionUtils;
-import com.google.gson.annotations.SerializedName;
+import com.cloudata.utils.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -60,8 +60,51 @@ public class SurveyManagerImpl implements SurveyManager {
     private SurveyPersistentService persistentService;
 
     @Override
-    public AddSurveyRespView addSurvey(final String sessionKey, final String surveyName) {
-        return null;
+    public AddSurveyRespView addSurvey(final String sessionKey, final String surveyTitle, final String language) {
+        final String METHOD = "addSurvey(String, String)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", surveyTitle = " + surveyTitle + ", language = " + language);
+        }
+
+        AddSurveyRespView view = null;
+        int surveyId = -1;
+        AddSurveyReqParams addSurveyReqParams = new AddSurveyReqParams(sessionKey, surveyTitle, language);
+        try {
+            AddSurveyResponse addSurveyResponse = connectManager.addSurvey(addSurveyReqParams);
+            surveyId = addSurveyResponse.getSurveyId();
+            AddGroupReqParams addGroupReqParams = new AddGroupReqParams(sessionKey, surveyId, "G" + StringUtils.randomized(2));
+            connectManager.addGroup(addGroupReqParams);
+        } catch (CommandExecutionException e) {
+            final String message = "Failed to create survey '" + surveyTitle + "'";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            view = new AddSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
+        } finally {
+            if (surveyId != -1) {
+                if (isDebugEnabled) {
+                    DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - rollback the survey '" + surveyId + "' created");
+                }
+
+                DeleteSurveyReqParams deleteSurveyReqParams = new DeleteSurveyReqParams(sessionKey, surveyId);
+                try {
+                    connectManager.deleteSurvey(deleteSurveyReqParams);
+                } catch (CommandExecutionException ignore) {
+                    if (ERROR.isWarnEnabled()) {
+                        ERROR.warn(CNAME + "#" + METHOD + ": WARN - Failed to rollback the survey '" + surveyId + "'");
+                    }
+                }
+            }
+        }
+
+        view = new AddSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK);
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - view = " + view);
+        }
+
+        return view;
     }
 
     @Override
@@ -78,7 +121,7 @@ public class SurveyManagerImpl implements SurveyManager {
         try {
             succeed = connectManager.deleteSurvey(reqParams);
         } catch (CommandExecutionException e) {
-            message = "Failed to delete survey \'" + surveyId + "\'";
+            message = "Failed to delete survey '" + surveyId + "'";
             if (ERROR.isErrorEnabled()) {
                 ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
             }
@@ -124,41 +167,25 @@ public class SurveyManagerImpl implements SurveyManager {
             DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", surveyId = " + surveyId);
         }
 
-        // FIXME, maybe need to fetch it from DB
-        // don't leverage RPC calls provided by connect manager.
+        if (surveyId <= 0) {
+            final String message = "Invalid argument surveyId '" + surveyId + "' detected";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            return new GetSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
+        }
+
+        SurveyModel surveyModel = persistentService.queryForSurvey(surveyId);
+        SurveyDetailView survey = ViewUtils.copyOf(surveyModel);
         GetSurveyRespView view = new GetSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK, null);
+        view.setSurvey(survey);
 
         if (isDebugEnabled) {
             DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - " + view);
         }
 
         return view;
-    }
-
-    private List<String> propsOf(final Class<SurveyDetailView> targetClass) {
-        final String METHOD = "propsOf(Class)";
-        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
-        if (isDebugEnabled) {
-            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - targetClass = " + targetClass);
-        }
-
-        final List<String> propKeys = new LinkedList<>();
-        ReflectionUtils.doWithFields(targetClass, new ReflectionUtils.FieldCallback() {
-            @Override
-            public void doWith(final Field field) throws IllegalAccessException, IllegalArgumentException {
-                SerializedName serializedName = field.getAnnotation(SerializedName.class);
-                String propsKey = serializedName.value();
-
-                propKeys.add(propsKey);
-            }
-        }, new ReflectionUtils.FieldFilter() {
-            @Override
-            public boolean matches(final Field field) {
-                return field.isAnnotationPresent(SerializedName.class);
-            }
-        });
-
-        return propKeys;
     }
 
     @Override

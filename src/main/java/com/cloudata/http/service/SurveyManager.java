@@ -15,7 +15,7 @@ import com.cloudata.http.view.*;
  * Author: DORSEy
  */
 public interface SurveyManager {
-    AddSurveyRespView addSurvey(final String sessionKey, final String surveyName);
+    AddSurveyRespView addSurvey(final String sessionKey, final String surveyTitle, final String language);
 
     BooleanRespView deleteSurvey(final String sessionKey, final int surveyId);
 

@@ -10,20 +10,17 @@
 package com.cloudata.http.controller;
 
 import com.cloudata.CloudataConstants;
-import com.cloudata.http.callback.impl.DeleteSurveyCallback;
-import com.cloudata.http.callback.impl.GetQuestionsCallback;
-import com.cloudata.http.callback.impl.GetSurveyCallback;
-import com.cloudata.http.callback.impl.GetSurveysCallback;
+import com.cloudata.http.callback.impl.*;
 import com.cloudata.http.core.SurveyTemplate;
+import com.cloudata.http.exception.RequestParamNotFoundException;
 import com.cloudata.http.exception.ServiceException;
-import com.cloudata.http.view.BooleanRespView;
-import com.cloudata.http.view.GetQuestionsRespView;
-import com.cloudata.http.view.GetSurveyRespView;
-import com.cloudata.http.view.GetSurveysRespView;
+import com.cloudata.http.utils.ServletUtils;
+import com.cloudata.http.view.*;
 import com.cloudata.utils.JsonUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,19 +53,41 @@ public class SurveyController {
     @Autowired
     private SurveyTemplate surveyTemplate;
 
+    @Value("${DEFAULT_LANGUAGE}")
+    private String language;
+
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/survey", method = RequestMethod.POST, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
-    public void addSurvey(final HttpServletRequest request) {
+    public String addSurvey(final HttpServletRequest request) {
         final String METHOD = "addSurvey(HttpServletRequest)";
         final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
         if (isDebugEnabled) {
             DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - request = " + request);
         }
 
+        AddSurveyRespView view = null;
+        try {
+            String surveyName = ServletUtils.getStringParam(request, CloudataConstants.REQ_ATTR_SURVEY_TITLE);
+            view = surveyTemplate.execute(new AddSurveyCallback(surveyName, language));
+        } catch (RequestParamNotFoundException | ServiceException e) {
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + e.getMessage());
+            }
+
+            view = new AddSurveyRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+        }
+
+        String json = JsonUtils.toJson(view);
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - json = " + json);
+        }
+
+        return json;
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/survey/{surveyId}", method = RequestMethod.GET, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
+    @RequestMapping(value = "/surveys/{surveyId}", method = RequestMethod.GET, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
     public String getSurvey(@PathVariable("surveyId") final int surveyId) {
         final String METHOD = "getSurvey(int)";
         final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();

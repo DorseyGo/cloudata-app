@@ -116,7 +116,7 @@ public final class ViewUtils {
         return views;
     }
 
-    private static SurveyDetailView copyOf(final SurveyModel model) {
+    public static SurveyDetailView copyOf(final SurveyModel model) {
         if (model == null) {
             return null;
         }

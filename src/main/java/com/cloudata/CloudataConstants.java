@@ -16,7 +16,7 @@ package com.cloudata;
  */
 public interface CloudataConstants {
     String HTTP_JSON_CONTENT_TYPE = "application/json";
-    String REQ_ATTR_SURVEY_NAME = "surveyName";
+    String REQ_ATTR_SURVEY_TITLE = "surveyTitle";
     String RESP_VIEW_SURVEY_ID = "surveyId";
     String RESP_VIEW_GROUP_ID = "groupId";
     int REQ_OK = 1;
