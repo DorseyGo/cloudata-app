@@ -147,6 +147,7 @@ public class ConnectManagerImplTest {
         List<String> propKeys = new LinkedList<>();
         propKeys.add("sid");
         propKeys.add("faxto");
+        propKeys.add("surveyls_title");
 
         GetOrSetPropertiesResponse getOrSetPropertiesResponse = null;
         try {
@@ -179,6 +180,22 @@ public class ConnectManagerImplTest {
 
         // recycle
         deleteSurvey(surveyId);
+    }
+
+    @Test
+    public void testListQuestions() {
+        final int SURVEY_ID = 818388;
+
+        List<ListQuestionsResponse> responses = null;
+        try {
+            responses = manager.listQuestions(new ListQuestionsReqParams(sesionKey, SURVEY_ID));
+            Assert.assertTrue(true);
+        } catch (CommandExecutionException e) {
+            Assert.assertTrue(false);
+        }
+
+        Assert.assertTrue(responses != null);
+        System.out.println(responses);
     }
 
     @Test
