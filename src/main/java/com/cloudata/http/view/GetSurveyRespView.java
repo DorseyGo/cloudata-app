@@ -13,8 +13,6 @@ import com.cloudata.CloudataConstants;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Map;
-
 /**
  * The responded view of getting survey.
  * <p>
@@ -26,7 +24,7 @@ public class GetSurveyRespView extends AbstractRespView {
      */
     @Expose
     @SerializedName(CloudataConstants.RESP_VIEW_SURVEY)
-    private Map<String, Object> survey;
+    private SurveyDetailView survey;
 
     /**
      * Empty constructor of {@link GetSurveyRespView}.
@@ -46,11 +44,11 @@ public class GetSurveyRespView extends AbstractRespView {
         super(status, code, errorMessage);
     }
 
-    public Map<String, Object> getSurvey() {
+    public SurveyDetailView getSurvey() {
         return survey;
     }
 
-    public void setSurvey(final Map<String, Object> survey) {
+    public void setSurvey(final SurveyDetailView survey) {
         this.survey = survey;
     }
 
@@ -79,8 +77,9 @@ public class GetSurveyRespView extends AbstractRespView {
     @Override
     public int hashCode() {
         final int PRIME = 31;
-        int hashcode = PRIME + (survey == null || survey.isEmpty() ? 0 : survey.hashCode());
+        int hashcode = PRIME + (survey == null ? 0 : survey.hashCode());
 
         return (super.hashCode() + hashcode);
     }
+
 }

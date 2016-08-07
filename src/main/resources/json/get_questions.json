@@ -1,0 +1,15 @@
+{
+  "status": 200,
+  "code" : 1,
+  "errorMessage" : null,
+  "questions" : [
+    {
+      "questionId" :1,
+      "surveyId" : 2,
+      "question" : "how many chinese?"
+      "questionOrder" : 1,
+      "type" : "M",
+      "mandatory" : "N"
+    }
+  ]
+}

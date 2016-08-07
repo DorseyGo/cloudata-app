@@ -1,0 +1,25 @@
+{
+  "status": 200,
+  "code": 1,
+  "errorMessage" : null,
+  "surveys" : {
+      "curPage" : 1,
+      "numRecords" : 14,
+    "records" : [
+      {
+        "surveyId" : 12,
+        "surveyTitle" : "hello",
+        "startDate" : "2010-09-09 22:22:22",
+        "expires" : "2010-09-10 22:22:22",
+        "active" : "Y"
+      },
+      {
+        "surveyId" : 13,
+        "surveyTitle" : "world",
+        "startDate" : "2010-09-09 22:22:22",
+        "expires" : "2010-09-10 22:22:22",
+        "active" : "Y"
+      }
+    ]
+  }
+}

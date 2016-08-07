@@ -1,0 +1,6 @@
+{
+  "status": 200,
+  "code": 0,
+  "errorMessage" : "Failed to list surveys of owner[hello]",
+  "surveys" : null
+}

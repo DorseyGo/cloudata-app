@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloudata.persistent.dao.SurveyDao">
+    <resultMap id="surveyModel" type="com.cloudata.persistent.bean.SurveyModel">
+        <result property="surveyId" column="sid"/>
+        <result property="surveyTitle" column="surveyTitle" jdbcType="VARCHAR"/>
+        <result property="startDate" column="startdate"/>
+        <result property="expires" column="expires"/>
+        <result property="active" column="active"/>
+    </resultMap>
+
+    <select id="listSurveys" resultMap="surveyModel">
+        SELECT ls.sid, lsl.surveyls_title AS surveyTitle, ls.startdate, ls.expires, ls.active FROM lime_surveys AS ls
+        LEFT JOIN lime_surveys_languagesettings AS lsl ON ls.sid = lsl.surveyls_survey_id
+        <if test="owner != null and owner != '' ">
+            LEFT JOIN lime_users AS lu ON ls.owner_id = lu.uid AND lu.users_name = #{owner}
+        </if>
+        ORDER BY ls.sid ASC LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="count" resultType="int" parameterType="java.lang.String">
+        SELECT COUNT(ls.sid) FROM lime_surveys AS ls
+        <if test="owner != null and owner != ''">
+            LEFT JOIN lime_users AS lu ON ls.owner_id = lu.uid AND lu.users_name = #{owner, jdbcType=VARCHAR}
+        </if>
+    </select>
+</mapper>
