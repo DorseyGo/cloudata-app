@@ -80,6 +80,8 @@ public final class SurveyTemplate {
             if (ERROR.isErrorEnabled()) {
                 ERROR.error(CNAME + "#" + METHOD + ": ERROR - Failed to release session \'" + sessionKey + "\'");
             }
+
+            // ignore
         }
 
         return view;
