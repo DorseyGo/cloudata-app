@@ -9,9 +9,7 @@
 
 package com.cloudata.http.service;
 
-import com.cloudata.http.view.AddSurveyRespView;
-import com.cloudata.http.view.BooleanRespView;
-import com.cloudata.http.view.GetSurveyRespView;
+import com.cloudata.http.view.*;
 
 /**
  * Author: DORSEy
@@ -22,4 +20,8 @@ public interface SurveyManager {
     BooleanRespView deleteSurvey(final String sessionKey, final int surveyId);
 
     GetSurveyRespView getSurvey(final String sessionKey, final int surveyId);
+
+    GetSurveysRespView getSurveys(final String sessionKey, final int currentPage, final int pageSize, final String owner);
+
+    GetQuestionsRespView getQuestions(final String sessionKey, final int surveyId);
 }

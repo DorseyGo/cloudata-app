@@ -21,5 +21,31 @@
 
     <bean id="surveyManager" class="com.cloudata.http.service.impl.SurveyManagerImpl">
         <property name="connectManager" ref="connectManager" />
+        <property name="persistentService" ref="surveyPersistentService" />
     </bean>
+
+    <!-- the datasource -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/LimeSurvey" />
+        <property name="user" value="root" />
+        <property name="password" value="tong" />
+        <property name="driverClass" value="com.mysql.cj.jdbc.Driver" />
+    </bean>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="mapperLocations">
+            <list>
+                <value>classpath*:com/cloudata/persistent/dao/*mapper.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.cloudata.persistent.dao" />
+        <property name="markerInterface" value="com.cloudata.persistent.dao.BasicDao" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+    </bean>
+
+    <bean id="surveyPersistentService" class="com.cloudata.persistent.service.impl.SurveyPersistentServiceImpl" />
 </beans>
