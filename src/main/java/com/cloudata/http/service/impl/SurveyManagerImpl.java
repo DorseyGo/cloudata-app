@@ -83,7 +83,7 @@ public class SurveyManagerImpl implements SurveyManager {
 
             view = new AddSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
         } finally {
-            if (surveyId != -1) {
+            if (surveyId == -1) {
                 if (isDebugEnabled) {
                     DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - rollback the survey '" + surveyId + "' created");
                 }
