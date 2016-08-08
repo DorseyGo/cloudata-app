@@ -18,7 +18,7 @@ import com.google.gson.GsonBuilder;
 public final class JsonUtils {
 
     public static String toJson(final Object src) {
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
         String json = gson.toJson(src);
 
         return json;

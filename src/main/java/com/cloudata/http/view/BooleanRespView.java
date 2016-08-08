@@ -23,6 +23,16 @@ public class BooleanRespView extends AbstractRespView {
     }
 
     /**
+     * Constructor of {@link BooleanRespView}, with status and code specified.
+     *
+     * @param status the status.
+     * @param code   the code.
+     */
+    public BooleanRespView(final int status, final int code) {
+        this(status, code, null);
+    }
+
+    /**
      * Constructor of {@link BooleanRespView}, with status, code and error message specified.
      *
      * @param status       the status.

@@ -1,0 +1,16 @@
+
+// succeed
+// /api/surveys/$SURVEY_ID/questions/$QUESTION_ID
+{
+  "status": 200,
+  "code" : 1,
+  "errorMessage" : null
+}
+
+/*
+{
+  "status": 200,
+  "code" : 0,
+  "errorMessage" : "Failed to delete question '72'"
+}
+*/

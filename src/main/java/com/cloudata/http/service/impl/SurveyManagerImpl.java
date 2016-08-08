@@ -11,10 +11,7 @@ package com.cloudata.http.service.impl;
 
 import com.cloudata.CloudataConstants;
 import com.cloudata.connector.exception.CommandExecutionException;
-import com.cloudata.connector.request.AddGroupReqParams;
-import com.cloudata.connector.request.AddSurveyReqParams;
-import com.cloudata.connector.request.DeleteSurveyReqParams;
-import com.cloudata.connector.request.ListQuestionsReqParams;
+import com.cloudata.connector.request.*;
 import com.cloudata.connector.response.AddSurveyResponse;
 import com.cloudata.connector.response.ListQuestionsResponse;
 import com.cloudata.connector.service.ConnectManager;
@@ -217,6 +214,37 @@ public class SurveyManagerImpl implements SurveyManager {
         }
 
         return view;
+    }
+
+    @Override
+    public BooleanRespView deleteQuestion(final String sessionKey, final int questionId) {
+        final String METHOD = "deleteQuestion(String, int)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", questionId = " + questionId);
+        }
+
+        boolean succeed = false;
+        final String message = "Failed to delete question '" + questionId + "'";
+        DeleteQuestionReqParams reqParams = new DeleteQuestionReqParams(sessionKey, questionId);
+        try {
+            succeed = connectManager.deleteQuestion(reqParams);
+        } catch (CommandExecutionException e) {
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", cause " + e);
+            }
+
+            succeed = false;
+        }
+
+        BooleanRespView respView = (succeed) ? new BooleanRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK) :
+                new BooleanRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - respView = " + respView);
+        }
+
+        return respView;
     }
 
     public void setConnectManager(final ConnectManager connectManager) {

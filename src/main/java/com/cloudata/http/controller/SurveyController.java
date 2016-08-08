@@ -174,8 +174,26 @@ public class SurveyController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/surveys/{surveyId}/questions/{questionId}", method = RequestMethod.DELETE, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
-    public void deleteQuestion(@PathVariable("surveyId") final int surveyId, @PathVariable("questionId") final int questionId) {
+    public String deleteQuestion(@PathVariable("surveyId") final int surveyId, @PathVariable("questionId") final int questionId) {
+        final String METHOD = "deleteQuestion(int, int)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - surveyId = " + surveyId + ", questionId = " + questionId);
+        }
 
+        BooleanRespView respView = null;
+        try {
+            respView = surveyTemplate.execute(new DeleteQuestionCallback(surveyId, questionId));
+        } catch (ServiceException e) {
+            respView = new BooleanRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+        }
+
+        String json = JsonUtils.toJson(respView);
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - json = " + json);
+        }
+
+        return json;
     }
 
     @ResponseStatus(HttpStatus.OK)
