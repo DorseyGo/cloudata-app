@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cloudata.persistent.dao.SurveyDao">
-    <resultMap id="surveyModel" type="com.cloudata.persistent.bean.SurveyModel">
+    <resultMap id="surveyVO" type="com.cloudata.persistent.bean.SurveyVO">
         <result property="surveyId" column="sid"/>
         <result property="surveyTitle" column="surveyTitle" jdbcType="VARCHAR"/>
         <result property="startDate" column="startdate"/>
@@ -10,7 +10,7 @@
         <result property="active" column="active"/>
     </resultMap>
 
-    <select id="listSurveys" resultMap="surveyModel">
+    <select id="listSurveys" resultMap="surveyVO">
         SELECT ls.sid, lsl.surveyls_title AS surveyTitle, ls.startdate, ls.expires, ls.active FROM lime_surveys AS ls
         LEFT JOIN lime_surveys_languagesettings AS lsl ON ls.sid = lsl.surveyls_survey_id
         <if test="owner != null and owner != '' ">
@@ -26,7 +26,7 @@
         </if>
     </select>
 
-    <select id="querySurveyById" parameterType="int" resultMap="surveyModel">
+    <select id="querySurveyById" parameterType="int" resultMap="surveyVO">
         SELECT ls.sid, lsl.surveyls_title AS surveyTitle, ls.startdate, ls.expires, ls.active FROM lime_surveys AS ls LEFT JOIN lime_surveys_languagesettings AS lsl ON ls.sid = lsl.surveyls_survey_id WHERE ls.sid = #{surveyId}
     </select>
 </mapper>

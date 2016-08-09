@@ -43,4 +43,9 @@ public interface CloudataConstants {
     String RESP_VIEW_CURRENT_PAGE = "curPage";
     String RESP_VEW_NUM_RECORDS = "numRecords";
     String RESP_VIEW_RECORDS = "records";
+
+    String RESP_VIEW_ANSWER = "answer";
+    String RESP_VIEW_ANSWERS = "answers";
+
+    String RESP_VIEW_ORDER = "order";
 }

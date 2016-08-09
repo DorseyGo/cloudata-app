@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloudata.persistent.dao.QuestionDao">
+    <resultMap id="questionVo" type="com.cloudata.persistent.bean.QuestionVO">
+        <result property="questionId" column="qid" />
+        <result property="question" column="question" />
+        <result property="type" column="questionType" />
+        <result property="questionOrder" column="question_order" />
+        <result property="mandatory" column="mandatory" />
+        <collection property="answerVOs" resultMap="answerVo" />
+    </resultMap>
+
+    <resultMap id="answerVo" type="com.cloudata.persistent.bean.AnswerVO">
+        <result property="questionId" column="questionId" />
+        <result property="answer" column="answer" />
+        <result property="order" column="answerOrder" />
+    </resultMap>
+
+    <select id="listQuestions" resultMap="questionVo">
+        SELECT lq.qid qid, lq.question question, lq.type questionType, lq.question_order question_order, lq.mandatory mandatory,
+        la.qid questionId, la.answer answer, la.sortorder answerOrder
+        FROM lime_questions lq LEFT JOIN lime_answers la ON lq.qid = la.qid
+        WHERE lq.parent_qid = 0 AND lq.sid = #{surveyId}
+        UNION
+        SELECT lq.qid qid, lq.question question, lq.type questionType, lq.question_order question_order, lq.mandatory mandatory,
+        lqs.qid questionId, lqs.question answer, lqs.question_order answerOrder
+        FROM lime_questions lq LEFT JOIN lime_questions lqs ON lqs.parent_qid = lq.qid
+        WHERE lq.parent_qid = 0 AND lq.sid = #{surveyId}
+    </select>
+
+</mapper>

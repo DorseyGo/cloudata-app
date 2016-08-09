@@ -18,7 +18,8 @@ import com.cloudata.connector.service.ConnectManager;
 import com.cloudata.http.converter.ViewUtils;
 import com.cloudata.http.service.SurveyManager;
 import com.cloudata.http.view.*;
-import com.cloudata.persistent.bean.SurveyModel;
+import com.cloudata.persistent.bean.QuestionVO;
+import com.cloudata.persistent.bean.SurveyVO;
 import com.cloudata.persistent.service.SurveyPersistentService;
 import com.cloudata.persistent.structs.Pagination;
 import com.cloudata.utils.StringUtils;
@@ -27,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -144,7 +146,7 @@ public class SurveyManagerImpl implements SurveyManager {
             DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", owner = " + owner);
         }
 
-        Pagination<SurveyModel> pagination = persistentService.paginate(currentPage, pageSize, owner);
+        Pagination<SurveyVO> pagination = persistentService.paginate(currentPage, pageSize, owner);
         com.cloudata.http.structs.Pagination<SurveyDetailView> viewPagination = ViewUtils.copyOf(pagination);
         GetSurveysRespView resp = new GetSurveysRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK);
         resp.setSurveys(viewPagination);
@@ -173,8 +175,8 @@ public class SurveyManagerImpl implements SurveyManager {
             return new GetSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
         }
 
-        SurveyModel surveyModel = persistentService.queryForSurvey(surveyId);
-        SurveyDetailView survey = ViewUtils.copyOf(surveyModel);
+        SurveyVO surveyVO = persistentService.queryForSurvey(surveyId);
+        SurveyDetailView survey = ViewUtils.copyOf(surveyVO);
         GetSurveyRespView view = new GetSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK, null);
         view.setSurvey(survey);
 
@@ -193,21 +195,25 @@ public class SurveyManagerImpl implements SurveyManager {
             DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", surveyId = " + surveyId);
         }
 
-        List<ListQuestionsResponse> responses = null;
-        ListQuestionsReqParams reqParams = new ListQuestionsReqParams(sessionKey, surveyId);
+        List<QuestionVO> questionVOs = null;
+        GetQuestionsRespView view = null;
+        List<QuestionDetailView> questions = null;
         try {
-            responses = connectManager.listQuestions(reqParams);
-        } catch (CommandExecutionException e) {
-            final String message = "Failed to list questions of survey[" + surveyId + "]";
-            if (ERROR.isErrorEnabled()) {
-                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            questionVOs = persistentService.queryForQuestions(surveyId);
+            if (questionVOs != null && !questionVOs.isEmpty()) {
+                questions = ViewUtils.copyOf(questionVOs.toArray(new QuestionVO[questionVOs.size()]));
             }
 
-            return new GetQuestionsRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
-        }
+            view = new GetQuestionsRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK);
+            view.setQuestions(questions);
+        } catch (Exception e) {
+            final String message = "Failed to query questions by surveyId '" + surveyId + "'";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", " + e);
+            }
 
-        GetQuestionsRespView view = new GetQuestionsRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK);
-        view.setQuestions(ViewUtils.copyOf(responses.toArray(new ListQuestionsResponse[responses.size()])));
+            view = new GetQuestionsRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
+        }
 
         if (isDebugEnabled) {
             DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - view = " + view);

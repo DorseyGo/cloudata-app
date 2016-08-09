@@ -9,7 +9,8 @@
 
 package com.cloudata.persistent.service;
 
-import com.cloudata.persistent.bean.SurveyModel;
+import com.cloudata.persistent.bean.QuestionVO;
+import com.cloudata.persistent.bean.SurveyVO;
 import com.cloudata.persistent.structs.Pagination;
 
 import java.util.List;
@@ -18,11 +19,13 @@ import java.util.List;
  * Author: DORSEy
  */
 public interface SurveyPersistentService {
-    List<SurveyModel> listSurveys(final int offset, final int limit, final String owner);
+    List<SurveyVO> listSurveys(final int offset, final int limit, final String owner);
 
     int count(final String owner);
 
-    Pagination<SurveyModel> paginate(final int currentPage, final int pageSize, final String owner);
+    Pagination<SurveyVO> paginate(final int currentPage, final int pageSize, final String owner);
 
-    SurveyModel queryForSurvey(final int surveyId);
+    SurveyVO queryForSurvey(final int surveyId);
+
+    List<QuestionVO> queryForQuestions(final int surveyId);
 }

@@ -9,7 +9,7 @@
 
 package com.cloudata.persistent.dao;
 
-import com.cloudata.persistent.bean.SurveyModel;
+import com.cloudata.persistent.bean.SurveyVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -20,9 +20,9 @@ import java.util.List;
  */
 @Repository("surveyDao")
 public interface SurveyDao extends BasicDao {
-    List<SurveyModel> listSurveys(@Param("offset") final int offset, @Param("limit") final int limit, @Param("owner") final String owner);
+    List<SurveyVO> listSurveys(@Param("offset") final int offset, @Param("limit") final int limit, @Param("owner") final String owner);
 
     int count(@Param("owner") final String owner);
 
-    SurveyModel querySurveyById(@Param("surveyId") final int surveyId);
+    SurveyVO querySurveyById(@Param("surveyId") final int surveyId);
 }

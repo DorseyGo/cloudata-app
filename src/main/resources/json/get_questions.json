@@ -10,6 +10,13 @@
       "questionOrder" : 1,
       "type" : "M",
       "mandatory" : "N"
+      "answers" : [
+        {
+          "answer" : "yes",
+          "questionId" : 1,
+          "order" : 0
+        }
+      ]
     }
   ]
 }

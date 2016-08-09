@@ -15,6 +15,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Author: DORSEy
@@ -29,6 +30,8 @@ public class QuestionDetailView implements Serializable {
     @SerializedName(CloudataConstants.RESP_VIEW_SURVEY_ID)
     private int surveyId;
 
+    @Expose
+    @SerializedName(CloudataConstants.RESP_VIEW_GROUP_ID)
     private int groupId;
 
     @Expose
@@ -46,6 +49,10 @@ public class QuestionDetailView implements Serializable {
     @Expose
     @SerializedName(CloudataConstants.RESP_VIEW_QUESTION_ORDER)
     private int questionOrder;
+
+    @Expose
+    @SerializedName(CloudataConstants.RESP_VIEW_ANSWERS)
+    private List<AnswerDetailView> answers;
 
     /**
      * Empty constructor of {@link QuestionDetailView}.
@@ -109,4 +116,13 @@ public class QuestionDetailView implements Serializable {
     public void setQuestionOrder(final int questionOrder) {
         this.questionOrder = questionOrder;
     }
+
+    public List<AnswerDetailView> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(final List<AnswerDetailView> answers) {
+        this.answers = answers;
+    }
+
 }
