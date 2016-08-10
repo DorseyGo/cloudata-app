@@ -48,4 +48,13 @@ public interface CloudataConstants {
     String RESP_VIEW_ANSWERS = "answers";
 
     String RESP_VIEW_ORDER = "order";
+
+    String REQ_ATTR_SURVEY_ID = "surveyId";
+    String REQ_ATTR_GROUP_ID = "groupId";
+    String REQ_ATTR_QUESTION = "question";
+    String REQ_ATTR_QUESTION_TYPE = "type";
+    String REQ_ATTR_MANDATORY = "mandatory";
+    String REQ_ATTR_ANSWERS = "answers";
+    String REQ_ATTR_ANSWER = "answer";
+    String REQ_ATTR_LANGUAGE = "language";
 }

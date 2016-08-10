@@ -9,6 +9,7 @@
 
 package com.cloudata.http.service;
 
+import com.cloudata.connector.importor.structs.Question;
 import com.cloudata.http.view.*;
 
 /**
@@ -26,4 +27,6 @@ public interface SurveyManager {
     GetQuestionsRespView getQuestions(final String sessionKey, final int surveyId);
 
     BooleanRespView deleteQuestion(final String sessionKey, final int questionId);
+
+    AddQuestionRespView addQuestion(final String sessionKey, final int surveyId, final int groupId, final Question question);
 }

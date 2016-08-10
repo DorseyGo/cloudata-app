@@ -14,6 +14,7 @@ import com.cloudata.http.annotation.ReqURL;
 import com.cloudata.http.callback.impl.*;
 import com.cloudata.http.core.SurveyTemplate;
 import com.cloudata.http.exception.ServiceException;
+import com.cloudata.http.structs.Question;
 import com.cloudata.http.view.*;
 import com.cloudata.utils.JsonUtils;
 import com.cloudata.utils.StringUtils;
@@ -244,16 +245,64 @@ public class SurveyController {
         return json;
     }
 
+    /**
+     * <strong>
+     *     <ul>
+     *         <li>
+     *             The parameter question should be like this:
+     *             {
+     *                 "surveyId": 123,
+     *                 "groupId": 123,
+     *                 "question": "are u single?",
+     *                 "type": "L/M/5/...",
+     *                 "answers": [
+     *                      {
+     *                          "answer": "yes"
+     *                      },
+     *                      {
+     *                          "answer": "no"
+     *                      }
+     *                 ]
+     *             }
+     *         </li>
+     *     </ul>
+     * </strong>
+     *
+     */
+    @ReqURL("curl -X POST -d 'question={$JSON_STR}' http://$SERVER_ADDR:$PORT/cloudata-app/api/surveys/12/question")
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/surveys/{surveyId}/question", method = RequestMethod.POST, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
-    public void addQuestion(@PathVariable("surveyId") final int surveyId, final HttpServletRequest request) {
+    public String addQuestion(@PathVariable("surveyId") final int surveyId, final String question, final HttpServletRequest request) {
         final String METHOD = "addQuestion(int, HttpServletRequest)";
         final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
         if (isDebugEnabled) {
             DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - surveyId = " + surveyId + ", request = " + request);
         }
 
+        AddQuestionRespView respView = null;
+        if (surveyId <= 0 || !StringUtils.isNotBlank(question)) {
+            final String message = "Survey ID '" + surveyId + "' should be greater than 0 or question '" + question + "' should not be null or empty";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
 
+            respView = new AddQuestionRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, message);
+        } else {
+            Question newQuestion = JsonUtils.fromJson(question, Question.class);
+            newQuestion.setLanguage(language);
+            try {
+                respView = surveyTemplate.execute(new AddQuestionCallback(surveyId, newQuestion));
+            } catch (ServiceException e) {
+                respView = new AddQuestionRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+            }
+        }
+
+        String json = JsonUtils.toJson(respView);
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - json = " + json);
+        }
+
+        return json;
     }
 
     @ReqURL("curl -X GET http://$SERVER_ADDR:$PORT/cloudata-app/api/surveys/12/questions")

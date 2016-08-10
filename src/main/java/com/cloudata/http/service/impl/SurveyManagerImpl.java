@@ -11,8 +11,13 @@ package com.cloudata.http.service.impl;
 
 import com.cloudata.CloudataConstants;
 import com.cloudata.connector.exception.CommandExecutionException;
+import com.cloudata.connector.importor.QuestionGenerator;
+import com.cloudata.connector.importor.QuestionGeneratorFactory;
+import com.cloudata.connector.importor.structs.Question;
 import com.cloudata.connector.request.*;
+import com.cloudata.connector.response.AddGroupResponse;
 import com.cloudata.connector.response.AddSurveyResponse;
+import com.cloudata.connector.response.ImportQuestionResponse;
 import com.cloudata.connector.response.ListQuestionsResponse;
 import com.cloudata.connector.service.ConnectManager;
 import com.cloudata.http.converter.ViewUtils;
@@ -28,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,16 +79,15 @@ public class SurveyManagerImpl implements SurveyManager {
             AddSurveyResponse addSurveyResponse = connectManager.addSurvey(addSurveyReqParams);
             surveyId = addSurveyResponse.getSurveyId();
             AddGroupReqParams addGroupReqParams = new AddGroupReqParams(sessionKey, surveyId, "G" + StringUtils.randomized(2));
-            connectManager.addGroup(addGroupReqParams);
+            AddGroupResponse addGroupResponse = connectManager.addGroup(addGroupReqParams);
+            view = new AddSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK, surveyId, addGroupResponse.getGroupId());
         } catch (CommandExecutionException e) {
             final String message = "Failed to create survey '" + surveyTitle + "'";
             if (ERROR.isErrorEnabled()) {
                 ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
             }
 
-            view = new AddSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
-        } finally {
-            if (surveyId == -1) {
+            if (surveyId != -1) {
                 if (isDebugEnabled) {
                     DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - rollback the survey '" + surveyId + "' created");
                 }
@@ -96,9 +101,10 @@ public class SurveyManagerImpl implements SurveyManager {
                     }
                 }
             }
+
+            view = new AddSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
         }
 
-        view = new AddSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK);
         if (isDebugEnabled) {
             DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - view = " + view);
         }
@@ -245,6 +251,39 @@ public class SurveyManagerImpl implements SurveyManager {
 
         BooleanRespView respView = (succeed) ? new BooleanRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK) :
                 new BooleanRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - respView = " + respView);
+        }
+
+        return respView;
+    }
+
+    @Override
+    public AddQuestionRespView addQuestion(final String sessionKey, final int surveyId, final int groupId, final Question question) {
+        final String METHOD = "addQuestion(String, int, int, String)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", surveyId = " + surveyId + ", groupId = " + groupId + ", question = " + question);
+        }
+
+        AddQuestionRespView respView = null;
+        String importedData = null;
+        QuestionGenerator generator = QuestionGeneratorFactory.getFactory().get(question.getType());
+        try {
+            importedData = generator.generate(question);
+
+            ImportQuestionReqParams reqParams = new ImportQuestionReqParams(sessionKey, surveyId, groupId, importedData);
+            ImportQuestionResponse response = connectManager.importQuestion(reqParams);
+            respView = new AddQuestionRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK, response.getQuestionId());
+        } catch (CommandExecutionException | IOException e) {
+            final String message = "Failed to add question to survey '" + surveyId + "'";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", " + e);
+            }
+
+            respView = new AddQuestionRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
+        }
 
         if (isDebugEnabled) {
             DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - respView = " + respView);
