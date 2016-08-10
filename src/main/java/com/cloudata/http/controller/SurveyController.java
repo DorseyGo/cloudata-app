@@ -10,13 +10,13 @@
 package com.cloudata.http.controller;
 
 import com.cloudata.CloudataConstants;
+import com.cloudata.http.annotation.ReqURL;
 import com.cloudata.http.callback.impl.*;
 import com.cloudata.http.core.SurveyTemplate;
-import com.cloudata.http.exception.RequestParamNotFoundException;
 import com.cloudata.http.exception.ServiceException;
-import com.cloudata.http.utils.ServletUtils;
 import com.cloudata.http.view.*;
 import com.cloudata.utils.JsonUtils;
+import com.cloudata.utils.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,25 +56,34 @@ public class SurveyController {
     @Value("${DEFAULT_LANGUAGE}")
     private String language;
 
+    @ReqURL("curl -X POST -d 'surveyTitle=hello' http://$SERVER_ADDR:$PORT/cloudata-app/api/survey")
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/survey", method = RequestMethod.POST, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
-    public String addSurvey(final HttpServletRequest request) {
+    public String addSurvey(final String surveyTitle) {
         final String METHOD = "addSurvey(HttpServletRequest)";
         final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
         if (isDebugEnabled) {
-            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - request = " + request);
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - surveyTitle = " + surveyTitle);
         }
 
         AddSurveyRespView view = null;
-        try {
-            String surveyName = ServletUtils.getStringParam(request, CloudataConstants.REQ_ATTR_SURVEY_TITLE);
-            view = surveyTemplate.execute(new AddSurveyCallback(surveyName, language));
-        } catch (RequestParamNotFoundException | ServiceException e) {
+        if (!StringUtils.isNotBlank(surveyTitle)) {
+            final String message = "No survey title '" + surveyTitle + "' found";
             if (ERROR.isErrorEnabled()) {
-                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + e.getMessage());
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
             }
 
-            view = new AddSurveyRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+            view = new AddSurveyRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, message);
+        } else {
+            try {
+                view = surveyTemplate.execute(new AddSurveyCallback(surveyTitle, language));
+            } catch (ServiceException e) {
+                if (ERROR.isErrorEnabled()) {
+                    ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + e.getMessage());
+                }
+
+                view = new AddSurveyRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+            }
         }
 
         String json = JsonUtils.toJson(view);
@@ -86,6 +95,7 @@ public class SurveyController {
         return json;
     }
 
+    @ReqURL("curl -X GET http://$SERVER_ADDR:$PORT/cloudata-app/api/surveys/12")
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/surveys/{surveyId}", method = RequestMethod.GET, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
     public String getSurvey(@PathVariable("surveyId") final int surveyId) {
@@ -96,10 +106,19 @@ public class SurveyController {
         }
 
         GetSurveyRespView view = null;
-        try {
-            view = surveyTemplate.execute(new GetSurveyCallback(surveyId));
-        } catch (ServiceException e) {
-            view = new GetSurveyRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+        if (surveyId <= 0) {
+            final String message = "Survey ID '" + surveyId + "' should be greater than 0";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            view = new GetSurveyRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, message);
+        } else {
+            try {
+                view = surveyTemplate.execute(new GetSurveyCallback(surveyId));
+            } catch (ServiceException e) {
+                view = new GetSurveyRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+            }
         }
 
         String json = JsonUtils.toJson(view);
@@ -111,6 +130,7 @@ public class SurveyController {
         return json;
     }
 
+    @ReqURL("curl -X GET http://$SERVER_ADDR:$PORT/cloudata-app/api/surveys/1/20")
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/surveys/{currentPage}/{pageSize}", method = RequestMethod.GET, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
     public String getSurveys(@PathVariable("currentPage") final int currentPage, @PathVariable("pageSize") final int pageSize) {
@@ -121,10 +141,19 @@ public class SurveyController {
         }
 
         GetSurveysRespView view = null;
-        try {
-            view = surveyTemplate.execute(new GetSurveysCallback(currentPage, pageSize));
-        } catch (ServiceException e) {
-            view = new GetSurveysRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+        if (currentPage <= 0 || pageSize <= 0) {
+            final String message = "Current page '" + currentPage + "' or page size '" + pageSize + "' should be greater than 0";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            view = new GetSurveysRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, message);
+        } else {
+            try {
+                view = surveyTemplate.execute(new GetSurveysCallback(currentPage, pageSize));
+            } catch (ServiceException e) {
+                view = new GetSurveysRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+            }
         }
 
         String json = JsonUtils.toJson(view);
@@ -136,21 +165,30 @@ public class SurveyController {
         return json;
     }
 
+    @ReqURL("curl -X DELETE http://$SERVER_ADDR:$PORT/cloudata-app/api/surveys/12")
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/surveys/{surveyId}", method = RequestMethod.DELETE, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
-    public String deleteSurvey(@PathVariable("surveyId") final int surveyId, final HttpServletRequest request) {
-        final String METHOD = "deleteSurvey(int, HttpServletRequest)";
+    public String deleteSurvey(@PathVariable("surveyId") final int surveyId) {
+        final String METHOD = "deleteSurvey(int)";
         final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
         if (isDebugEnabled) {
-            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - surveyId = " + surveyId + ", request = " + request);
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - surveyId = " + surveyId);
         }
 
-        //request.getUserPrincipal();
         BooleanRespView view = null;
-        try {
-            view = surveyTemplate.execute(new DeleteSurveyCallback(surveyId));
-        } catch (ServiceException e) {
-            view = new BooleanRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+        if (surveyId <= 0) {
+            String message = "Survey Id '" + surveyId + "' should be greater than 0";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            view = new BooleanRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, message);
+        } else {
+            try {
+                view = surveyTemplate.execute(new DeleteSurveyCallback(surveyId));
+            } catch (ServiceException e) {
+                view = new BooleanRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+            }
         }
 
         String json = JsonUtils.toJson(view);
@@ -172,6 +210,7 @@ public class SurveyController {
     // question blocks
     // ------------------------------------
 
+    @ReqURL("curl -X DELETE http://$SERVER_ADDR:$PORT/cloudata-app/api/surveys/12/questions/12")
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/surveys/{surveyId}/questions/{questionId}", method = RequestMethod.DELETE, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
     public String deleteQuestion(@PathVariable("surveyId") final int surveyId, @PathVariable("questionId") final int questionId) {
@@ -182,10 +221,19 @@ public class SurveyController {
         }
 
         BooleanRespView respView = null;
-        try {
-            respView = surveyTemplate.execute(new DeleteQuestionCallback(surveyId, questionId));
-        } catch (ServiceException e) {
-            respView = new BooleanRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+        if (surveyId <= 0 || questionId <= 0) {
+            final String message = "Survey ID '" + surveyId + "' or question ID '" + questionId + "' should be greater than 0";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            respView = new BooleanRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, message);
+        } else {
+            try {
+                respView = surveyTemplate.execute(new DeleteQuestionCallback(surveyId, questionId));
+            } catch (ServiceException e) {
+                respView = new BooleanRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+            }
         }
 
         String json = JsonUtils.toJson(respView);
@@ -199,9 +247,16 @@ public class SurveyController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/surveys/{surveyId}/question", method = RequestMethod.POST, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
     public void addQuestion(@PathVariable("surveyId") final int surveyId, final HttpServletRequest request) {
+        final String METHOD = "addQuestion(int, HttpServletRequest)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - surveyId = " + surveyId + ", request = " + request);
+        }
+
 
     }
 
+    @ReqURL("curl -X GET http://$SERVER_ADDR:$PORT/cloudata-app/api/surveys/12/questions")
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/surveys/{surveyId}/questions", method = RequestMethod.GET, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
     public String getQuestions(@PathVariable("surveyId") final int surveyId) {
@@ -212,10 +267,19 @@ public class SurveyController {
         }
 
         GetQuestionsRespView view = null;
-        try {
-            view = surveyTemplate.execute(new GetQuestionsCallback(surveyId));
-        } catch (ServiceException e) {
-            view = new GetQuestionsRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+        if (surveyId <= 0) {
+            final String message = "Survey ID '" + surveyId + "' should be greater than 0";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            view = new GetQuestionsRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, message);
+        } else {
+            try {
+                view = surveyTemplate.execute(new GetQuestionsCallback(surveyId));
+            } catch (ServiceException e) {
+                view = new GetQuestionsRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+            }
         }
 
         String json = JsonUtils.toJson(view);
@@ -229,7 +293,7 @@ public class SurveyController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/surveys/{surveyId}/questions/{questionId}", method = RequestMethod.POST, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
-    public void updateQuestion(@PathVariable("surveyId") final int surveyId, @PathVariable("questionId") final int questionId, final HttpServletRequest request) {
+    public void updateQuestion(@PathVariable("surveyId") final int surveyId, @PathVariable("questionId") final int questionId) {
 
     }
 }

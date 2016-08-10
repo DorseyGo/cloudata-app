@@ -55,4 +55,18 @@ public final class StringUtils {
 
         return builder.toString();
     }
+
+    /**
+     * Returns true if and only if the source string <code>src</code> is not blank, otherwise false. <strong> Note that,
+     * the string is not blank means neither it's null nor empty. </strong>
+     *
+     * @param src the string to be tested.
+     * @return true if and only if it's not null and not an empty string, otherwise false.
+     */
+    public static boolean isNotBlank(final String src) {
+        if (src == null || "".equals(src.trim()))
+            return false;
+
+        return true;
+    }
 }
