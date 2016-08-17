@@ -1,0 +1,130 @@
+The API documentation
++ Note that the $CONTEXT, it is up to your deployment, such as localhost:8080/cloudata-app
+  - create a survey
+    - request URL: $CONTEXT/api/survey 
+    - request method: POST
+    - request parameters: surveyTitle (survey name u are going to create)
+    - response: {
+                  "status": 200, // http request succeed
+                  "code" : 1, // logic proceed successfuly
+                  "message": null // indicates why it failed, it is non-null or no-empty string if and only if the code is 0
+                  "surveyId": 12 // the survey ID of the survey being created
+                  "groupId": 12 // the group ID associated when survey created successfully
+                }
+  
+  - get a specific survey
+    - request URL: $CONTEXT/api/surveys/${surveyId}
+    - request method: GET
+    - request parameters: survey ID, being specified at url path
+    - response: {
+                  "status": 200, // http request succeed
+                  "code": 1, // logic proceed successfully
+                  "message": null // indicates why it failed
+                  "survey": {
+                      "surveyId": 12 // the survey ID
+                      "surveyTitle": "simple test" // survey title
+                      "startDate": 12-12-2013 // the start time of this survey
+                      "expires": 13-12-2013 // the expired time
+                      "active": Y // activate or not
+                  }
+                  
+                }
+  
+  - get surveys, pagination
+    - request URL: $CONTEXT/api/surveys
+    - request method: GET
+    - request parameters: N/A
+    - response: {
+                  "status": 200, // http request succeed
+                  "code": 1, // logic proceed successful
+                  "message": null // indicates why it failed
+                  "surveys": {
+                    "currentPage": 1, // the current page
+                    "numRecords": 12, // number of records, totally
+                    "records": [
+                      {
+                        "surveyId": 12 // the survey ID
+                        "surveyTitle": "hello", // the survey title/name
+                        "startDate": // refer to get survey method
+                        "expires": // refer to comment in get survey method
+                        "active": // refer to comment in get survey method
+                      }
+                    ]
+                  }
+                }
+
+  - delete a specific survey
+    - request URL: $CONTEXT/api/surveys/${surveyId}
+    - request method: DELETE
+    - request parameters: survey ID, in url path
+    - response: {
+                  "status": 200 // http request succeed
+                  "code": 1 // succeed
+                  "message": null // indicates why it failed
+                }
+  
+  - delete a specific question
+    - request URL: $CONTEXT/api/surveys/${surveyId}/questions/${questionId}
+    - request method: DELETE
+    - request parameters: survey ID, question ID in url path
+    - response: {
+                  "status": 200 // http request succeed
+                  "code": 1 // succeed
+                  "message": null // indicates why it failed
+                }
+  
+  - add a question to specific survey
+    - request URL: $CONTEXT/api/surveys/${surveyId}/question
+    - request method: POST
+    - request parameters: survey ID, in url path
+                          - post parameters:
+                              // in json format
+                              question: {
+                                  "surveyId": 12,
+                                  "groupId" : 12,
+                                  "question": "are u a single dog?" // the question u are asking
+                                  "type": "L" // the question type, like single-choice question or multiple-choices question, plz refer to QuestionType for details
+                                  "answers": [
+                                    {
+                                      "answer": "yes" // one of answers for the question
+                                    }
+                                    {
+                                      "answer": "no" // one of answers for the question
+                                    }
+                                  ]
+                              }
+    - response: {
+                  "status": 200, // http request succeed
+                  "code": 1 // logic proceed successful
+                  "message": null // indicates why it failed
+                  "questionId": 12 // the question being created
+                }
+
+  - get questions
+    - request URL: $CONTEXT/api/surveys/${surveyId}/questions
+    - request method: GET
+    - request parametrs: survey ID, in URL path
+    - response: {
+                  "status": 200, // http request succeed
+                  "code": 1, // logic proceed successful
+                  "message": null, // indicates why it failed
+                  "questions": [
+                    {
+                      "questionId": 12, // question ID
+                      "surveyId": 12, // survey ID
+                      "groupId": 12, // the group ID
+                      "type": "L", // the question type
+                      "question": "are u a single dog?", // the question dog
+                      "mandatory": "Y", // indicates whether it's mandatory
+                      "questionOrder": 1, // the order of the question, for sorting
+                      "answers": [
+                        {
+                          "answer": "yes", // one of answers of the question
+                          "questionId": 12, // the question ID, be careful, it's different of single-choice/multiple-choices questions
+                          "answerOrder": 0, // the order of answer
+                        }
+                      ]
+                    }
+                  ]
+                }
+  
