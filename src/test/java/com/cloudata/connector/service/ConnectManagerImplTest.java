@@ -99,7 +99,7 @@ public class ConnectManagerImplTest {
 
     @Test
     public void testAddSurvey() {
-        final String SURVEY_TITLE = "refactor API test01";
+        final String SURVEY_TITLE = "refactor API test04";
         final String SURVEY_LANGUAGE = "en";
 
         AddSurveyResponse response = null;
