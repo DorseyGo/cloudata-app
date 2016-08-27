@@ -75,7 +75,7 @@
         </fields>
         <rows>
         <#list question.answers as answer>
-            <#if children.default>
+            <#if answer.default>
                 <row>
                     <qid><![CDATA[${question.questionId}]]></qid>
                     <sqid><![CDATA[${answer.questionId}]]></sqid>
