@@ -26,9 +26,9 @@
 
     <!-- the datasource -->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/LimeSurvey" />
+        <property name="jdbcUrl" value="jdbc:mysql://clouddata.f3322.net:10336/LimeSurvey" />
         <property name="user" value="root" />
-        <property name="password" value="tong" />
+        <property name="password" value="engine" />
         <property name="driverClass" value="com.mysql.cj.jdbc.Driver" />
     </bean>
 

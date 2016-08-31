@@ -8,23 +8,25 @@
         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- enable MVC annotation -->
-    <mvc:annotation-driven />
+    <mvc:annotation-driven/>
 
     <!-- specify from which spring will scan for components -->
-    <context:component-scan base-package="com.cloudata.app" />
+    <context:component-scan base-package="com.cloudata"/>
 
     <!-- using this to handle static resource request -->
-    <mvc:default-servlet-handler />
-    <mvc:resources mapping="/js/**" location="/js/" />
-    <mvc:resources mapping="/css/**" location="/css/" />
+    <mvc:default-servlet-handler/>
+    <mvc:resources mapping="/js/**" location="/js/"/>
+    <mvc:resources mapping="/css/**" location="/css/"/>
 
-    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter"/>
 
-    <!-- specify the resource view resolver -->
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/jsp" />
-        <property name="suffix" value=".jsp" />
-        <!-- define the order of the view resolver -->
-        <property name="order" value="0" />
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="fileEncoding" value="UTF-8"/>
+        <property name="locations">
+            <list>
+                <value>classpath*:limesurvey_sever.properties</value>
+                <value>classpath*:jdbc.properties</value>
+            </list>
+        </property>
     </bean>
 </beans>
