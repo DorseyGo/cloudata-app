@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -202,11 +203,49 @@ public class SurveyController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/surveys/{surveyId}", method = RequestMethod.POST, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
+    @RequestMapping(value = "/surveys/{surveyId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void updateSurvey(@PathVariable("surveyId") final int surveyId, final HttpServletRequest request) {
-
+        throw new UnsupportedOperationException();
     }
 
+    // ------------------------------------
+    // group blocks
+    // ------------------------------------
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/surveys/{surveyId}/group", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String addGroup(@PathVariable("surveyId") final int surveyId, @RequestParam("groupTitle") final String groupTitle) {
+        final String METHOD = "addGroup(int, String)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - surveyId = " + surveyId + ", groupTitle = " + groupTitle);
+        }
+
+        String result = null;
+        AddGroupRespView respView = null;
+        if (surveyId <= 0 || groupTitle == null || groupTitle.trim().isEmpty()) {
+            final String message = "surveyId [" + surveyId + "] should be greater than zero and groupTitle [" + groupTitle + "] should not be null or empty";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            respView = new AddGroupRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, message);
+        } else {
+
+            try {
+                respView = surveyTemplate.execute(new AddGroupCallback(surveyId, groupTitle));
+            } catch (ServiceException e) {
+                respView = new AddGroupRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+            }
+        }
+
+        result = JsonUtils.toJson(respView);
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - result = " + result);
+        }
+
+        return result;
+    }
 
     // ------------------------------------
     // question blocks

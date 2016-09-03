@@ -292,6 +292,35 @@ public class SurveyManagerImpl implements SurveyManager {
         return respView;
     }
 
+    @Override
+    public AddGroupRespView addGroup(final String sessionKey, final int surveyId, final String groupTitle) {
+        final String METHOD = "addGroup(String, int, String)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", surveyId = " + surveyId + ", groupTitle = " + groupTitle);
+        }
+
+        AddGroupRespView respView = null;
+        AddGroupReqParams reqParams = new AddGroupReqParams(sessionKey, surveyId, groupTitle);
+        try {
+            AddGroupResponse addGroupResponse = connectManager.addGroup(reqParams);
+            respView = new AddGroupRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK, addGroupResponse.getGroupId());
+        } catch (CommandExecutionException e) {
+            final String message = "Failed to add group [" + groupTitle + "] to survey [" + surveyId + "]";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", " + e);
+            }
+
+            respView = new AddGroupRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
+        }
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - respView = " + respView);
+        }
+
+        return respView;
+    }
+
     public void setConnectManager(final ConnectManager connectManager) {
         this.connectManager = connectManager;
     }

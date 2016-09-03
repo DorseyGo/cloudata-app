@@ -102,4 +102,20 @@ abstract class AbstractRespView implements RespView {
 
         return hashcode;
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this)
+            return true;
+
+        if (obj == null || !(obj instanceof AbstractRespView))
+            return false;
+
+        AbstractRespView that = (AbstractRespView) obj;
+        boolean isEqualed = (status == that.status);
+        isEqualed = isEqualed && (code == that.code);
+        isEqualed = isEqualed && (errorMessage == null ? that.errorMessage == null : errorMessage.equals(that.errorMessage));
+
+        return isEqualed;
+    }
 }
