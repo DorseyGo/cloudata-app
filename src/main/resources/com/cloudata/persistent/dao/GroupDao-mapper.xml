@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloudata.persistent.dao.GroupDao">
+    <resultMap id="groupEntity" type="com.cloudata.persistent.bean.GroupEntity">
+        <result property="groupId" column="gid"/>
+        <result property="groupOrder" column="group_order"/>
+        <result property="groupTitle" column="group_name"/>
+        <result property="groupDescription" column="description"/>
+    </resultMap>
+
+    <select id="countGroups" resultMap="int">
+        SELECT COUNT(gid) FROM lime_groups AS lg WHERE lg.sid = #{surveyId}
+    </select>
+
+    <select id="listGroups" resultMap="groupEntity">
+        SELECT gid, group_order, group_name, description FROM lime_groups AS lg WHERE lg.sid = #{surveyId}
+        GROUP BY gid ASC LIMIT #{offset}, #{pageSize}
+    </select>
+
+</mapper>

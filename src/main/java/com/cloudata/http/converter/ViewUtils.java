@@ -13,13 +13,16 @@ import com.cloudata.connector.response.ListQuestionsResponse;
 import com.cloudata.connector.response.ListSurveysResponse;
 import com.cloudata.http.structs.Pagination;
 import com.cloudata.http.view.AnswerDetailView;
+import com.cloudata.http.view.GroupDetailView;
 import com.cloudata.http.view.QuestionDetailView;
 import com.cloudata.http.view.SurveyDetailView;
 import com.cloudata.persistent.bean.AnswerVO;
+import com.cloudata.persistent.bean.GroupEntity;
 import com.cloudata.persistent.bean.QuestionVO;
 import com.cloudata.persistent.bean.SurveyVO;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -199,6 +202,49 @@ public final class ViewUtils {
         AnswerDetailView view = new AnswerDetailView(answer);
         view.setQuestionId(questionId);
         view.setAnswerOrder(answerOrder);
+
+        return view;
+    }
+
+    public static Pagination<GroupDetailView> copyGroupOf(com.cloudata.persistent.structs.Pagination<GroupEntity> entities) {
+        if (entities == null) {
+            return null;
+        }
+
+        int currentPage = entities.getCurrentPage();
+        int totalCount = entities.getTotalCount();
+        List<GroupDetailView> records = copyOf(entities.getRecords().toArray(new GroupEntity[]{}));
+
+        return new Pagination<>(currentPage, totalCount, records);
+    }
+
+    private static List<GroupDetailView> copyOf(final GroupEntity... entities) {
+        if (entities == null || entities.length == 0) {
+            return new ArrayList<>(0);
+        }
+
+        List<GroupDetailView> views = new LinkedList<>();
+        for (GroupEntity entity : entities) {
+            views.add(copyOf(entity));
+        }
+
+        return views;
+    }
+
+    private static GroupDetailView copyOf(final GroupEntity entity) {
+        if (entity == null)
+            return null;
+
+        int groupId = entity.getGroupId();
+        int groupOrder = entity.getGroupOrder();
+        String groupTitle = entity.getGroupTitle();
+        String groupDescription = entity.getGroupDescription();
+
+        GroupDetailView view = new GroupDetailView();
+        view.setGroupId(groupId);
+        view.setGroupOrder(groupOrder);
+        view.setGroupTitle(groupTitle);
+        view.setGroupDescription(groupDescription);
 
         return view;
     }

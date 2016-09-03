@@ -247,6 +247,77 @@ public class SurveyController {
         return result;
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "surveys/{surveyId}/groups/{groupId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String deleteGroup(@PathVariable("surveyId") final int surveyId, @PathVariable("groupId") final int groupId) {
+        final String METHOD = "deleteGroup(int, int)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - surveyId = " + surveyId + ", groupId = " + groupId);
+        }
+
+        BooleanRespView respView = null;
+        if (surveyId <= 0 || groupId <= 0) {
+            final String message = "surveyId [" + surveyId + "] and groupId [" + groupId + "] should greater than zero";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            respView = new BooleanRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, message);
+        } else  {
+            try {
+                respView = surveyTemplate.execute(new DeleteGroupCallback(surveyId, groupId));
+            } catch (ServiceException e) {
+                respView = new BooleanRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+            }
+        }
+
+        String result = JsonUtils.toJson(respView);
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - result = " + result);
+        }
+
+        return result;
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/surveys/{surveyId}/groups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getGroups(@PathVariable("surveyId") final int surveyId, @RequestParam("currentPage") final int currentPage, @RequestParam("pageSize") final int pageSize) {
+        final String METHOD = "getGroups(int, int, int)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - surveyId = " + surveyId + ", currentPage = " + currentPage + ", pageSize = " + pageSize);
+        }
+
+        ListGroupsRespView respView = null;
+        if (surveyId <= 0 || currentPage <= 0 || pageSize <= 0) {
+            final String message = "surveyId [" + surveyId + "], currentPage [" + currentPage + "] and pageSize [" + pageSize + "] should greater than zero";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            respView = new ListGroupsRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, message);
+        } else {
+            // restrict that every page can show how many records.
+            int localPageSize = (pageSize > CloudataConstants.PAGE_SIZE_THRESHOLD) ? CloudataConstants.PAGE_SIZE_THRESHOLD : pageSize;
+
+            try {
+                respView = surveyTemplate.execute(new ListGroupCallback(surveyId, currentPage, localPageSize));
+            } catch (ServiceException e) {
+                respView = new ListGroupsRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+            }
+        }
+
+        String result = JsonUtils.toJson(respView);
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - result = " + result);
+        }
+
+        return result;
+    }
+
     // ------------------------------------
     // question blocks
     // ------------------------------------

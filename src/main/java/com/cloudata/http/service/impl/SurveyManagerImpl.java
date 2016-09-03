@@ -18,11 +18,11 @@ import com.cloudata.connector.request.*;
 import com.cloudata.connector.response.AddGroupResponse;
 import com.cloudata.connector.response.AddSurveyResponse;
 import com.cloudata.connector.response.ImportQuestionResponse;
-import com.cloudata.connector.response.ListQuestionsResponse;
 import com.cloudata.connector.service.ConnectManager;
 import com.cloudata.http.converter.ViewUtils;
 import com.cloudata.http.service.SurveyManager;
 import com.cloudata.http.view.*;
+import com.cloudata.persistent.bean.GroupEntity;
 import com.cloudata.persistent.bean.QuestionVO;
 import com.cloudata.persistent.bean.SurveyVO;
 import com.cloudata.persistent.service.SurveyPersistentService;
@@ -34,7 +34,6 @@ import org.apache.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -313,6 +312,54 @@ public class SurveyManagerImpl implements SurveyManager {
 
             respView = new AddGroupRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
         }
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - respView = " + respView);
+        }
+
+        return respView;
+    }
+
+    @Override
+    public BooleanRespView deleteGroup(final String sessionKey, final int surveyId, final int groupId) {
+        final String METHOD = "deleteGroup(String, int, int)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", surveyId = " + surveyId + ", groupId = " + groupId);
+        }
+
+        BooleanRespView respView = null;
+        DeleteGroupReqParams reqParams = new DeleteGroupReqParams(sessionKey, surveyId, groupId);
+        try {
+            connectManager.deleteGroup(reqParams);
+            respView = new BooleanRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK);
+        } catch (CommandExecutionException e) {
+            final String message = "Failed to delete group [" + groupId + "]";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", " + e);
+            }
+
+            respView = new BooleanRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
+        }
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - respView = " + respView);
+        }
+
+        return respView;
+    }
+
+    @Override
+    public ListGroupsRespView getGroups(final String sessionKey, final int currentPage, final int pageSize) {
+        final String METHOD = "getGroups(String, int, int)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", currentPage = " + currentPage + ", pageSize = " + pageSize);
+        }
+
+        Pagination<GroupEntity> pagination = persistentService.paginate(pageSize, currentPage, pageSize);
+        com.cloudata.http.structs.Pagination<GroupDetailView> views = ViewUtils.copyGroupOf(pagination);
+        ListGroupsRespView respView = new ListGroupsRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK, views);
 
         if (isDebugEnabled) {
             DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - respView = " + respView);
