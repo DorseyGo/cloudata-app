@@ -34,6 +34,16 @@ public class GetSurveyRespView extends AbstractRespView {
     }
 
     /**
+     * Constructor of {@link GetSurveyRespView}, with status and code specified.
+     *
+     * @param status the status.
+     * @param code   the code.
+     */
+    public GetSurveyRespView(final int status, final int code) {
+        this(status, code, null);
+    }
+
+    /**
      * Constructor of {@link GetSurveyRespView}, with status, code and error message specified.
      *
      * @param status       the status.

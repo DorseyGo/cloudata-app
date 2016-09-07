@@ -77,28 +77,11 @@ public class SurveyManagerImpl implements SurveyManager {
         try {
             AddSurveyResponse addSurveyResponse = connectManager.addSurvey(addSurveyReqParams);
             surveyId = addSurveyResponse.getSurveyId();
-            AddGroupReqParams addGroupReqParams = new AddGroupReqParams(sessionKey, surveyId, "G" + StringUtils.randomized(2));
-            AddGroupResponse addGroupResponse = connectManager.addGroup(addGroupReqParams);
-            view = new AddSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK, surveyId, addGroupResponse.getGroupId());
+            view = new AddSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK, surveyId);
         } catch (CommandExecutionException e) {
             final String message = "Failed to create survey '" + surveyTitle + "'";
             if (ERROR.isErrorEnabled()) {
-                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
-            }
-
-            if (surveyId != -1) {
-                if (isDebugEnabled) {
-                    DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - rollback the survey '" + surveyId + "' created");
-                }
-
-                DeleteSurveyReqParams deleteSurveyReqParams = new DeleteSurveyReqParams(sessionKey, surveyId);
-                try {
-                    connectManager.deleteSurvey(deleteSurveyReqParams);
-                } catch (CommandExecutionException ignore) {
-                    if (ERROR.isWarnEnabled()) {
-                        ERROR.warn(CNAME + "#" + METHOD + ": WARN - Failed to rollback the survey '" + surveyId + "'");
-                    }
-                }
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", due to " + e);
             }
 
             view = new AddSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
@@ -127,7 +110,7 @@ public class SurveyManagerImpl implements SurveyManager {
         } catch (CommandExecutionException e) {
             message = "Failed to delete survey '" + surveyId + "'";
             if (ERROR.isErrorEnabled()) {
-                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", due to " + e);
             }
 
             succeed = false;
@@ -182,7 +165,7 @@ public class SurveyManagerImpl implements SurveyManager {
 
         SurveyVO surveyVO = persistentService.queryForSurvey(surveyId);
         SurveyDetailView survey = ViewUtils.copyOf(surveyVO);
-        GetSurveyRespView view = new GetSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK, null);
+        GetSurveyRespView view = new GetSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK);
         view.setSurvey(survey);
 
         if (isDebugEnabled) {
@@ -214,7 +197,7 @@ public class SurveyManagerImpl implements SurveyManager {
         } catch (Exception e) {
             final String message = "Failed to query questions by surveyId '" + surveyId + "'";
             if (ERROR.isErrorEnabled()) {
-                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", " + e);
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", due to " + e);
             }
 
             view = new GetQuestionsRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
