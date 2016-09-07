@@ -24,10 +24,6 @@ public class AddSurveyRespView extends AbstractRespView {
     @SerializedName(CloudataConstants.RESP_VIEW_SURVEY_ID)
     private int surveyId;
 
-    @Expose
-    @SerializedName(CloudataConstants.RESP_VIEW_GROUP_ID)
-    private int groupId;
-
     /**
      * Empty constructor of {@link AddSurveyRespView}.
      */
@@ -41,12 +37,10 @@ public class AddSurveyRespView extends AbstractRespView {
      * @param status   the status.
      * @param code     the code.
      * @param surveyId the survey ID.
-     * @param groupId  the group ID.
      */
-    public AddSurveyRespView(final int status, final int code, final int surveyId, final int groupId) {
+    public AddSurveyRespView(final int status, final int code, final int surveyId) {
         this(status, code);
         setSurveyId(surveyId);
-        setGroupId(groupId);
     }
 
     /**
@@ -78,17 +72,9 @@ public class AddSurveyRespView extends AbstractRespView {
         this.surveyId = surveyId;
     }
 
-    public int getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(final int groupId) {
-        this.groupId = groupId;
-    }
-
     @Override
     public String toString() {
-        return super.toString() + ", surveyId: " + getSurveyId() + ", groupId: " + getGroupId();
+        return super.toString() + ", surveyId: " + getSurveyId();
     }
 
     @Override
@@ -104,7 +90,6 @@ public class AddSurveyRespView extends AbstractRespView {
         isEqualed = isEqualed && (code == that.code);
         isEqualed = isEqualed && (errorMessage == null ? that.errorMessage == null : errorMessage.equals(that.errorMessage));
         isEqualed = isEqualed && (surveyId == that.surveyId);
-        isEqualed = isEqualed && (groupId == that.groupId);
 
         return isEqualed;
     }
@@ -113,7 +98,6 @@ public class AddSurveyRespView extends AbstractRespView {
     public int hashCode() {
         final int PRIME = 31;
         int hashcode = PRIME + (surveyId);
-        hashcode += PRIME + (groupId);
 
         return (hashcode + super.hashCode());
     }

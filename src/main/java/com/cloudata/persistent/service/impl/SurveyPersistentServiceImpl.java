@@ -9,8 +9,10 @@
 
 package com.cloudata.persistent.service.impl;
 
+import com.cloudata.persistent.bean.GroupEntity;
 import com.cloudata.persistent.bean.QuestionVO;
 import com.cloudata.persistent.bean.SurveyVO;
+import com.cloudata.persistent.dao.GroupDao;
 import com.cloudata.persistent.dao.QuestionDao;
 import com.cloudata.persistent.dao.SurveyDao;
 import com.cloudata.persistent.service.SurveyPersistentService;
@@ -31,6 +33,9 @@ public class SurveyPersistentServiceImpl implements SurveyPersistentService {
 
     @Autowired
     private QuestionDao questionDao;
+
+    @Autowired
+    private GroupDao groupDao;
 
     @Override
     public List<SurveyVO> listSurveys(int offset, int limit, String owner) {
@@ -54,6 +59,20 @@ public class SurveyPersistentServiceImpl implements SurveyPersistentService {
     @Override
     public List<QuestionVO> queryForQuestions(final int surveyId) {
         return questionDao.listQuestions(surveyId);
+    }
+
+    @Override
+    public Pagination<GroupEntity> paginate(final int surveyId, final int currentPage, final int pageSize) {
+        int offset = (currentPage - 1) * pageSize;
+        int totalCount = countGroups(surveyId);
+        List<GroupEntity> groups = groupDao.listGroups(surveyId, currentPage, pageSize);
+
+        return new Pagination<>(currentPage, totalCount, groups);
+    }
+
+    @Override
+    public int countGroups(final int surveyId) {
+        return groupDao.countGroups(surveyId);
     }
 
     @Override

@@ -9,6 +9,7 @@
 
 package com.cloudata.persistent.service;
 
+import com.cloudata.persistent.bean.GroupEntity;
 import com.cloudata.persistent.bean.QuestionVO;
 import com.cloudata.persistent.bean.SurveyVO;
 import com.cloudata.persistent.structs.Pagination;
@@ -28,4 +29,8 @@ public interface SurveyPersistentService {
     SurveyVO queryForSurvey(final int surveyId);
 
     List<QuestionVO> queryForQuestions(final int surveyId);
+
+    Pagination<GroupEntity> paginate(final int surveyId, final int currentPage, final int pageSize);
+
+    int countGroups(final int surveyId);
 }

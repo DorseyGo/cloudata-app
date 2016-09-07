@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -131,10 +132,10 @@ public class SurveyController {
         return json;
     }
 
-    @ReqURL("curl -X GET http://$SERVER_ADDR:$PORT/cloudata-app/api/surveys/1/20")
+    @ReqURL("curl -X GET http://$SERVER_ADDR:$PORT/cloudata-app/api/surveys?currentPage=1&pageSize=20")
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/surveys/{currentPage}/{pageSize}", method = RequestMethod.GET, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
-    public String getSurveys(@PathVariable("currentPage") final int currentPage, @PathVariable("pageSize") final int pageSize) {
+    @RequestMapping(value = "/surveys", method = RequestMethod.GET, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
+    public String getSurveys(@RequestParam("currentPage") final int currentPage, @RequestParam("pageSize") final int pageSize) {
         final String METHOD = "getSurveys()";
         final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
         if (isDebugEnabled) {
@@ -202,11 +203,120 @@ public class SurveyController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/surveys/{surveyId}", method = RequestMethod.POST, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
+    @RequestMapping(value = "/surveys/{surveyId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void updateSurvey(@PathVariable("surveyId") final int surveyId, final HttpServletRequest request) {
-
+        throw new UnsupportedOperationException();
     }
 
+    // ------------------------------------
+    // group blocks
+    // ------------------------------------
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/surveys/{surveyId}/group", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String addGroup(@PathVariable("surveyId") final int surveyId, @RequestParam("groupTitle") final String groupTitle) {
+        final String METHOD = "addGroup(int, String)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - surveyId = " + surveyId + ", groupTitle = " + groupTitle);
+        }
+
+        String result = null;
+        AddGroupRespView respView = null;
+        if (surveyId <= 0 || groupTitle == null || groupTitle.trim().isEmpty()) {
+            final String message = "surveyId [" + surveyId + "] should be greater than zero and groupTitle [" + groupTitle + "] should not be null or empty";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            respView = new AddGroupRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, message);
+        } else {
+
+            try {
+                respView = surveyTemplate.execute(new AddGroupCallback(surveyId, groupTitle));
+            } catch (ServiceException e) {
+                respView = new AddGroupRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+            }
+        }
+
+        result = JsonUtils.toJson(respView);
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - result = " + result);
+        }
+
+        return result;
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "surveys/{surveyId}/groups/{groupId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String deleteGroup(@PathVariable("surveyId") final int surveyId, @PathVariable("groupId") final int groupId) {
+        final String METHOD = "deleteGroup(int, int)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - surveyId = " + surveyId + ", groupId = " + groupId);
+        }
+
+        BooleanRespView respView = null;
+        if (surveyId <= 0 || groupId <= 0) {
+            final String message = "surveyId [" + surveyId + "] and groupId [" + groupId + "] should greater than zero";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            respView = new BooleanRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, message);
+        } else  {
+            try {
+                respView = surveyTemplate.execute(new DeleteGroupCallback(surveyId, groupId));
+            } catch (ServiceException e) {
+                respView = new BooleanRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+            }
+        }
+
+        String result = JsonUtils.toJson(respView);
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - result = " + result);
+        }
+
+        return result;
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/surveys/{surveyId}/groups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getGroups(@PathVariable("surveyId") final int surveyId, @RequestParam("currentPage") final int currentPage, @RequestParam("pageSize") final int pageSize) {
+        final String METHOD = "getGroups(int, int, int)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - surveyId = " + surveyId + ", currentPage = " + currentPage + ", pageSize = " + pageSize);
+        }
+
+        ListGroupsRespView respView = null;
+        if (surveyId <= 0 || currentPage <= 0 || pageSize <= 0) {
+            final String message = "surveyId [" + surveyId + "], currentPage [" + currentPage + "] and pageSize [" + pageSize + "] should greater than zero";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+            }
+
+            respView = new ListGroupsRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, message);
+        } else {
+            // restrict that every page can show how many records.
+            int localPageSize = (pageSize > CloudataConstants.PAGE_SIZE_THRESHOLD) ? CloudataConstants.PAGE_SIZE_THRESHOLD : pageSize;
+
+            try {
+                respView = surveyTemplate.execute(new ListGroupCallback(surveyId, currentPage, localPageSize));
+            } catch (ServiceException e) {
+                respView = new ListGroupsRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
+            }
+        }
+
+        String result = JsonUtils.toJson(respView);
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - result = " + result);
+        }
+
+        return result;
+    }
 
     // ------------------------------------
     // question blocks
@@ -272,8 +382,8 @@ public class SurveyController {
      */
     @ReqURL("curl -X POST -d 'question={$JSON_STR}' http://$SERVER_ADDR:$PORT/cloudata-app/api/surveys/12/question")
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/surveys/{surveyId}/question", method = RequestMethod.POST, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
-    public String addQuestion(@PathVariable("surveyId") final int surveyId, final String question, final HttpServletRequest request) {
+    @RequestMapping(value = "/surveys/{surveyId}/groups/{groupId}/question", method = RequestMethod.POST, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
+    public String addQuestion(@PathVariable("surveyId") final int surveyId, @PathVariable("groupId") final int groupId , @RequestParam("question") final String question, final HttpServletRequest request) {
         final String METHOD = "addQuestion(int, HttpServletRequest)";
         final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
         if (isDebugEnabled) {
@@ -281,8 +391,8 @@ public class SurveyController {
         }
 
         AddQuestionRespView respView = null;
-        if (surveyId <= 0 || !StringUtils.isNotBlank(question)) {
-            final String message = "Survey ID '" + surveyId + "' should be greater than 0 or question '" + question + "' should not be null or empty";
+        if (surveyId <= 0 || groupId <= 0 || !StringUtils.isNotBlank(question)) {
+            final String message = "Survey ID '" + surveyId + "' and group ID '"+ groupId +"' should be greater than 0 or question '" + question + "' should not be null or empty";
             if (ERROR.isErrorEnabled()) {
                 ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
             }
@@ -306,10 +416,10 @@ public class SurveyController {
         return json;
     }
 
-    @ReqURL("curl -X GET http://$SERVER_ADDR:$PORT/cloudata-app/api/surveys/12/questions")
+    @ReqURL("curl -X GET http://$SERVER_ADDR:$PORT/cloudata-app/api/surveys/12/groups/12/questions")
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/surveys/{surveyId}/questions", method = RequestMethod.GET, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
-    public String getQuestions(@PathVariable("surveyId") final int surveyId) {
+    @RequestMapping(value = "/surveys/{surveyId}/groups/{groupId}/questions", method = RequestMethod.GET, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
+    public String getQuestions(@PathVariable("surveyId") final int surveyId, @PathVariable("groupId") final int groupId) {
         final String METHOD = "getQuestions(int)";
         final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
         if (isDebugEnabled) {
@@ -317,8 +427,8 @@ public class SurveyController {
         }
 
         GetQuestionsRespView view = null;
-        if (surveyId <= 0) {
-            final String message = "Survey ID '" + surveyId + "' should be greater than 0";
+        if (surveyId <= 0 || groupId <= 0) {
+            final String message = "Survey ID '" + surveyId + "' and group ID '"+ groupId +"' should be greater than 0";
             if (ERROR.isErrorEnabled()) {
                 ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
             }
@@ -344,6 +454,6 @@ public class SurveyController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/surveys/{surveyId}/questions/{questionId}", method = RequestMethod.POST, produces = CloudataConstants.HTTP_JSON_CONTENT_TYPE)
     public void updateQuestion(@PathVariable("surveyId") final int surveyId, @PathVariable("questionId") final int questionId) {
-
+        throw new UnsupportedOperationException();
     }
 }

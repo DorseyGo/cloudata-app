@@ -18,11 +18,11 @@ import com.cloudata.connector.request.*;
 import com.cloudata.connector.response.AddGroupResponse;
 import com.cloudata.connector.response.AddSurveyResponse;
 import com.cloudata.connector.response.ImportQuestionResponse;
-import com.cloudata.connector.response.ListQuestionsResponse;
 import com.cloudata.connector.service.ConnectManager;
 import com.cloudata.http.converter.ViewUtils;
 import com.cloudata.http.service.SurveyManager;
 import com.cloudata.http.view.*;
+import com.cloudata.persistent.bean.GroupEntity;
 import com.cloudata.persistent.bean.QuestionVO;
 import com.cloudata.persistent.bean.SurveyVO;
 import com.cloudata.persistent.service.SurveyPersistentService;
@@ -34,7 +34,6 @@ import org.apache.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -78,28 +77,11 @@ public class SurveyManagerImpl implements SurveyManager {
         try {
             AddSurveyResponse addSurveyResponse = connectManager.addSurvey(addSurveyReqParams);
             surveyId = addSurveyResponse.getSurveyId();
-            AddGroupReqParams addGroupReqParams = new AddGroupReqParams(sessionKey, surveyId, "G" + StringUtils.randomized(2));
-            AddGroupResponse addGroupResponse = connectManager.addGroup(addGroupReqParams);
-            view = new AddSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK, surveyId, addGroupResponse.getGroupId());
+            view = new AddSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK, surveyId);
         } catch (CommandExecutionException e) {
             final String message = "Failed to create survey '" + surveyTitle + "'";
             if (ERROR.isErrorEnabled()) {
-                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
-            }
-
-            if (surveyId != -1) {
-                if (isDebugEnabled) {
-                    DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - rollback the survey '" + surveyId + "' created");
-                }
-
-                DeleteSurveyReqParams deleteSurveyReqParams = new DeleteSurveyReqParams(sessionKey, surveyId);
-                try {
-                    connectManager.deleteSurvey(deleteSurveyReqParams);
-                } catch (CommandExecutionException ignore) {
-                    if (ERROR.isWarnEnabled()) {
-                        ERROR.warn(CNAME + "#" + METHOD + ": WARN - Failed to rollback the survey '" + surveyId + "'");
-                    }
-                }
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", due to " + e);
             }
 
             view = new AddSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
@@ -128,7 +110,7 @@ public class SurveyManagerImpl implements SurveyManager {
         } catch (CommandExecutionException e) {
             message = "Failed to delete survey '" + surveyId + "'";
             if (ERROR.isErrorEnabled()) {
-                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message);
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", due to " + e);
             }
 
             succeed = false;
@@ -183,7 +165,7 @@ public class SurveyManagerImpl implements SurveyManager {
 
         SurveyVO surveyVO = persistentService.queryForSurvey(surveyId);
         SurveyDetailView survey = ViewUtils.copyOf(surveyVO);
-        GetSurveyRespView view = new GetSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK, null);
+        GetSurveyRespView view = new GetSurveyRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK);
         view.setSurvey(survey);
 
         if (isDebugEnabled) {
@@ -215,7 +197,7 @@ public class SurveyManagerImpl implements SurveyManager {
         } catch (Exception e) {
             final String message = "Failed to query questions by surveyId '" + surveyId + "'";
             if (ERROR.isErrorEnabled()) {
-                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", " + e);
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", due to " + e);
             }
 
             view = new GetQuestionsRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
@@ -284,6 +266,83 @@ public class SurveyManagerImpl implements SurveyManager {
 
             respView = new AddQuestionRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
         }
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - respView = " + respView);
+        }
+
+        return respView;
+    }
+
+    @Override
+    public AddGroupRespView addGroup(final String sessionKey, final int surveyId, final String groupTitle) {
+        final String METHOD = "addGroup(String, int, String)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", surveyId = " + surveyId + ", groupTitle = " + groupTitle);
+        }
+
+        AddGroupRespView respView = null;
+        AddGroupReqParams reqParams = new AddGroupReqParams(sessionKey, surveyId, groupTitle);
+        try {
+            AddGroupResponse addGroupResponse = connectManager.addGroup(reqParams);
+            respView = new AddGroupRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK, addGroupResponse.getGroupId());
+        } catch (CommandExecutionException e) {
+            final String message = "Failed to add group [" + groupTitle + "] to survey [" + surveyId + "]";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", " + e);
+            }
+
+            respView = new AddGroupRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
+        }
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - respView = " + respView);
+        }
+
+        return respView;
+    }
+
+    @Override
+    public BooleanRespView deleteGroup(final String sessionKey, final int surveyId, final int groupId) {
+        final String METHOD = "deleteGroup(String, int, int)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", surveyId = " + surveyId + ", groupId = " + groupId);
+        }
+
+        BooleanRespView respView = null;
+        DeleteGroupReqParams reqParams = new DeleteGroupReqParams(sessionKey, surveyId, groupId);
+        try {
+            connectManager.deleteGroup(reqParams);
+            respView = new BooleanRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK);
+        } catch (CommandExecutionException e) {
+            final String message = "Failed to delete group [" + groupId + "]";
+            if (ERROR.isErrorEnabled()) {
+                ERROR.error(CNAME + "#" + METHOD + ": ERROR - " + message + ", " + e);
+            }
+
+            respView = new BooleanRespView(HttpStatus.SC_OK, CloudataConstants.REQ_FAILED, message);
+        }
+
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - respView = " + respView);
+        }
+
+        return respView;
+    }
+
+    @Override
+    public ListGroupsRespView getGroups(final String sessionKey, final int currentPage, final int pageSize) {
+        final String METHOD = "getGroups(String, int, int)";
+        final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
+        if (isDebugEnabled) {
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", currentPage = " + currentPage + ", pageSize = " + pageSize);
+        }
+
+        Pagination<GroupEntity> pagination = persistentService.paginate(pageSize, currentPage, pageSize);
+        com.cloudata.http.structs.Pagination<GroupDetailView> views = ViewUtils.copyGroupOf(pagination);
+        ListGroupsRespView respView = new ListGroupsRespView(HttpStatus.SC_OK, CloudataConstants.REQ_OK, views);
 
         if (isDebugEnabled) {
             DEBUGGER.debug(CNAME + "#" + METHOD + ": EXIT - respView = " + respView);

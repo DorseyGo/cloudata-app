@@ -29,4 +29,10 @@ public interface SurveyManager {
     BooleanRespView deleteQuestion(final String sessionKey, final int questionId);
 
     AddQuestionRespView addQuestion(final String sessionKey, final int surveyId, final int groupId, final Question question);
+
+    AddGroupRespView addGroup(final String sessionKey, final int surveyId, final String groupTitle);
+
+    BooleanRespView deleteGroup(final String sessionKey, final int surveyId, final int groupId);
+
+    ListGroupsRespView getGroups(final String sessionKey, final int currentPage, final int pageSize);
 }

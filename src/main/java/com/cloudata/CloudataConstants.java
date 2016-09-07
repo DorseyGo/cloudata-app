@@ -57,4 +57,10 @@ public interface CloudataConstants {
     String REQ_ATTR_ANSWERS = "answers";
     String REQ_ATTR_ANSWER = "answer";
     String REQ_ATTR_LANGUAGE = "language";
+
+    int PAGE_SIZE_THRESHOLD = 20;
+    String RESP_VIEW_GROUP_ORDER = "groupOrder";
+    String RESP_VIEW_GROUP_TITLE = "groupTitle";
+    String RESP_VIEW_GROUP_DESCRIPTION = "groupDescription";
+    String RESP_VIEW_GROUPS = "groups";
 }
