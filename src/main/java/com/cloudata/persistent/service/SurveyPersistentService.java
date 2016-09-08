@@ -28,7 +28,7 @@ public interface SurveyPersistentService {
 
     SurveyVO queryForSurvey(final int surveyId);
 
-    List<QuestionVO> queryForQuestions(final int surveyId);
+    List<QuestionVO> queryForQuestions(final int surveyId, final int groupId);
 
     Pagination<GroupEntity> paginate(final int surveyId, final int currentPage, final int pageSize);
 

@@ -436,7 +436,7 @@ public class SurveyController {
             view = new GetQuestionsRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, message);
         } else {
             try {
-                view = surveyTemplate.execute(new GetQuestionsCallback(surveyId));
+                view = surveyTemplate.execute(new GetQuestionsCallback(surveyId, groupId));
             } catch (ServiceException e) {
                 view = new GetQuestionsRespView(HttpStatus.OK.value(), CloudataConstants.REQ_FAILED, e.getMessage());
             }

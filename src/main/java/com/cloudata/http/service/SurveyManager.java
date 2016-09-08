@@ -24,7 +24,7 @@ public interface SurveyManager {
 
     GetSurveysRespView getSurveys(final String sessionKey, final int currentPage, final int pageSize, final String owner);
 
-    GetQuestionsRespView getQuestions(final String sessionKey, final int surveyId);
+    GetQuestionsRespView getQuestions(final String sessionKey, final int surveyId, final int groupId);
 
     BooleanRespView deleteQuestion(final String sessionKey, final int questionId);
 

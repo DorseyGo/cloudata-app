@@ -57,8 +57,8 @@ public class SurveyPersistentServiceImpl implements SurveyPersistentService {
     }
 
     @Override
-    public List<QuestionVO> queryForQuestions(final int surveyId) {
-        return questionDao.listQuestions(surveyId);
+    public List<QuestionVO> queryForQuestions(final int surveyId, final int groupId) {
+        return questionDao.listQuestions(surveyId, groupId);
     }
 
     @Override

@@ -176,18 +176,18 @@ public class SurveyManagerImpl implements SurveyManager {
     }
 
     @Override
-    public GetQuestionsRespView getQuestions(final String sessionKey, final int surveyId) {
+    public GetQuestionsRespView getQuestions(final String sessionKey, final int surveyId, final int groupId) {
         final String METHOD = "getQuestions(String, int)";
         final boolean isDebugEnabled = DEBUGGER.isDebugEnabled();
         if (isDebugEnabled) {
-            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", surveyId = " + surveyId);
+            DEBUGGER.debug(CNAME + "#" + METHOD + ": ENTRY - sessionKey = " + sessionKey + ", surveyId = " + surveyId + ", groupId = " + groupId);
         }
 
         List<QuestionVO> questionVOs = null;
         GetQuestionsRespView view = null;
         List<QuestionDetailView> questions = null;
         try {
-            questionVOs = persistentService.queryForQuestions(surveyId);
+            questionVOs = persistentService.queryForQuestions(surveyId, groupId);
             if (questionVOs != null && !questionVOs.isEmpty()) {
                 questions = ViewUtils.copyOf(questionVOs.toArray(new QuestionVO[questionVOs.size()]));
             }

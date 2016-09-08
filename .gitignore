@@ -1,0 +1,7 @@
+/target/
+/web/WEB-INF/classes
+
+.classpath
+.project
+.settings/
+

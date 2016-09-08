@@ -19,19 +19,25 @@ public class GetQuestionsCallback extends AbstractSessionCallback<GetQuestionsRe
     /**
      * The survey ID.
      */
-    private int surveyId;
+    private final int surveyId;
+
+    /**
+     * The group ID.
+     */
+    private final int groupId;
 
     /**
      * Constructor of {@link GetQuestionsCallback}, with survey ID specified.
      *
      * @param surveyId the survey ID.
      */
-    public GetQuestionsCallback(final int surveyId) {
+    public GetQuestionsCallback(final int surveyId, final int groupId) {
         this.surveyId = surveyId;
+        this.groupId = groupId;
     }
 
     @Override
     public GetQuestionsRespView doInSession(String sessionKey) {
-        return surveyManager.getQuestions(sessionKey, surveyId);
+        return surveyManager.getQuestions(sessionKey, surveyId, groupId);
     }
 }

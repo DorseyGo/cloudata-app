@@ -18,15 +18,29 @@
     </resultMap>
 
     <select id="listQuestions" resultMap="questionVo">
-        SELECT lq.qid qid, lq.question question, lq.type questionType, lq.question_order question_order, lq.mandatory mandatory,
-        la.qid questionId, la.answer answer, la.sortorder answerOrder
-        FROM lime_questions lq LEFT JOIN lime_answers la ON lq.qid = la.qid
-        WHERE lq.parent_qid = 0 AND lq.sid = #{surveyId}
+        SELECT
+          lq.qid qid, lq.question question, lq.type questionType, lq.question_order question_order, lq.mandatory mandatory,
+          la.qid questionId, la.answer answer, la.sortorder answerOrder
+        FROM
+          lime_questions lq
+        LEFT JOIN
+          lime_answers la ON lq.qid = la.qid
+        WHERE
+          lq.parent_qid = 0
+          AND lq.sid = #{surveyId}
+          AND lq.gid = #{groupId}
         UNION
-        SELECT lq.qid qid, lq.question question, lq.type questionType, lq.question_order question_order, lq.mandatory mandatory,
-        lqs.qid questionId, lqs.question answer, lqs.question_order answerOrder
-        FROM lime_questions lq LEFT JOIN lime_questions lqs ON lqs.parent_qid = lq.qid
-        WHERE lq.parent_qid = 0 AND lq.sid = #{surveyId}
+        SELECT
+          lq.qid qid, lq.question question, lq.type questionType, lq.question_order question_order, lq.mandatory mandatory,
+          lqs.qid questionId, lqs.question answer, lqs.question_order answerOrder
+        FROM
+          lime_questions lq
+        LEFT JOIN
+          lime_questions lqs ON lqs.parent_qid = lq.qid
+        WHERE
+          lq.parent_qid = 0
+          AND lq.sid = #{surveyId}
+          AND lq.gid = #{groupId}
     </select>
 
 </mapper>

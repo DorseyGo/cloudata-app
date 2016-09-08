@@ -10,8 +10,8 @@
 package com.cloudata.persistent.dao;
 
 import com.cloudata.persistent.bean.QuestionVO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -20,5 +20,5 @@ import java.util.List;
  */
 @Repository("questionDao")
 public interface QuestionDao extends BasicDao {
-    List<QuestionVO> listQuestions(@PathVariable("surveyId") final int surveyId);
+    List<QuestionVO> listQuestions(@Param("surveyId") final int surveyId, @Param("groupId") final int groupId);
 }
