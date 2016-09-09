@@ -24,7 +24,7 @@
         <property name="persistentService" ref="surveyPersistentService" />
     </bean>
 
-    <!-- the datasource
+    <!-- the datasource -->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="jdbcUrl" value="jdbc:mysql://clouddata.f3322.net:10336/LimeSurvey" />
         <property name="user" value="root" />
@@ -33,9 +33,6 @@
         <property name="acquireRetryAttempts" value="8" />
         <property name="acquireRetryDelay" value="1000" />
     </bean>
-    -->
-
-
 
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
