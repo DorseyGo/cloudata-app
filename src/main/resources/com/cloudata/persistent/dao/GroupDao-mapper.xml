@@ -9,7 +9,7 @@
         <result property="groupDescription" column="description"/>
     </resultMap>
 
-    <select id="countGroups" resultMap="int">
+    <select id="countGroups" resultType="int">
         SELECT COUNT(gid) FROM lime_groups AS lg WHERE lg.sid = #{surveyId}
     </select>
 
